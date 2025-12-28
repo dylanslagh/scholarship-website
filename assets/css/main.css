@@ -1525,28 +1525,31 @@ input, select, textarea {
 		background-image: -webkit-linear-gradient(top, #008ead, #007b9d);
 		background-image: -ms-linear-gradient(top, #008ead, #007b9d);
 		background-image: linear-gradient(top, #008ead, #007b9d);
-		-moz-box-sizing: content-box;
-		-webkit-box-sizing: content-box;
-		-ms-box-sizing: content-box;
-		box-sizing: content-box;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		-ms-box-sizing: border-box;
+		box-sizing: border-box;
 		position: relative;
 		margin: 2.5% 0 2.5% 0;
-		padding: 0 40px 0 40px;
+		padding: 0 20px;
 		border-radius: 10px;
 		border: solid 1px #006e8b;
 		box-shadow: inset 0px 0px 0px 1px #12a0bf, 0px 1px 4px 0px rgba(0, 0, 0, 0.1);
 		background-color: #007b9d;
-		height: 86px;
+		min-height: 86px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
 	}
 
 		#header h1 {
-			position: absolute;
-			left: 40px;
-			top: 0;
 			color: #fff;
-			font-size: 2.4em;
-			letter-spacing: -2px;
-			line-height: 86px;
+			font-size: 1.6em;
+			letter-spacing: -1px;
+			line-height: 1.2;
+			padding: 15px 0;
+			margin: 0;
 		}
 
 			#header h1 a {
@@ -1555,12 +1558,11 @@ input, select, textarea {
 			}
 
 		#header nav {
-			position: absolute;
-			right: 40px;
-			top: 1px;
-			line-height: 84px;
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
 			text-transform: none;
-			font-size: 1.3em;
+			font-size: 1.1em;
 			letter-spacing: 0;
 		}
 
@@ -1568,8 +1570,9 @@ input, select, textarea {
 				display: inline-block;
 				text-decoration: none;
 				color: #fff;
-				padding: 0 25px 0 25px;
+				padding: 10px 15px;
 				outline: 0;
+				border-radius: 5px;
 			}
 
 				#header nav a.current-page-item {
@@ -1671,21 +1674,19 @@ input, select, textarea {
 		/* Header */
 
 			#header {
-				height: 76px;
+				min-height: 76px;
 			}
 
 				#header h1 {
-					font-size: 2em;
-					line-height: 76px;
+					font-size: 1.4em;
 				}
 
 				#header nav {
-					line-height: 74px;
-					font-size: 1.1em;
+					font-size: 1em;
 				}
 
 					#header nav a {
-						padding: 0 20px 0 20px;
+						padding: 0 15px 0 15px;
 					}
 
 		/* Banner */
@@ -1796,12 +1797,17 @@ input, select, textarea {
 				z-index: 10001;
 				text-align: center;
 				color: #fff;
-				font-size: 1.25em;
+				font-size: 1em;
 				background-color: #007294;
 			}
 
 				#titleBar .title {
 					line-height: 44px;
+					padding-left: 60px;
+					padding-right: 10px;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 
 				#titleBar .toggle {
