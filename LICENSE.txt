@@ -1,3 +1,13 @@
+Andresen Memorial Scholarships Website License Information
+
+Design and Template:
+This website utilizes the "Minimaxing" template by HTML5 UP (html5up.net), which is licensed under the Creative Commons Attribution 3.0 Unported (CC BY 3.0) license. You are free to share and adapt the design, provided you give appropriate credit.
+
+Content and Media:
+All text, photographs, and logos related to the Andresen family and the scholarship programs are © Harold A and Marilyn Kay Andresen Charitable Trust. All rights reserved.
+
+---
+
 Creative Commons Attribution 3.0 Unported
 http://creativecommons.org/licenses/by/3.0/
 
