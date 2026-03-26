@@ -5,12 +5,16 @@
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
-<html>
+<html lang="en">
 
 <head>
 	<title>Scholarship - Andresen Scholarships</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="Apply for the Andresen Memorial Scholarship — $1,500 awards for graduating seniors in Carroll County, Illinois pursuing any field of study." />
+	<meta property="og:title" content="Andresen Memorial Scholarship" />
+	<meta property="og:description" content="$1,500 scholarships for graduating seniors in Carroll County, Illinois. Honoring the Andresen family legacy since 1985." />
+	<meta property="og:type" content="website" />
 	<link rel="stylesheet" href="assets/css/main.css" />
 </head>
 
@@ -25,7 +29,7 @@
 
 						<header id="header">
 							<h1><a href="index.html" id="logo">Andresen Scholarships</a></h1>
-							<nav id="nav">
+							<nav id="nav" aria-label="Main navigation">
 								<a href="index.html">Home</a>
 								<a href="ag-scholarship.html">Ag Scholarship</a>
 								<a href="scholarship.html" class="current-page-item">Memorial Scholarship</a>
@@ -34,6 +38,13 @@
 
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<!-- Application Status Notice -->
+		<div id="application-notice">
+			<div class="container">
+				<p>The 2026 application period has closed. Please check back next year for updated application information.</p>
 			</div>
 		</div>
 
@@ -92,7 +103,7 @@
 							</p>
 
 							<h3>How to Apply</h3>
-							<p>Click the "Apply Now" button to complete your application online.</p>
+							<p class="how-to-apply-text">Click the "Apply Now" button to complete your application online.</p>
 						</section>
 
 					</div>
@@ -100,10 +111,9 @@
 
 						<section>
 							<h2>Apply Now</h2>
-							<p>Ready to apply for the Andresen Memorial Scholarship? Click the button below to complete
-								your application online.</p>
+							<p class="apply-sidebar-text" data-open-text="Ready to apply for the Andresen Memorial Scholarship? Click the button below to complete your application online.">Ready to apply for the Andresen Memorial Scholarship? Click the button below to complete your application online.</p>
 							<footer class="controls">
-								<a href="https://form.jotform.com/260096495872065" class="button" target="_blank">Apply
+								<a href="https://form.jotform.com/260096495872065" class="button apply-button" target="_blank">Apply
 									Now</a>
 							</footer>
 						</section>
@@ -144,6 +154,8 @@
 	<script src="assets/js/breakpoints.min.js"></script>
 	<script src="assets/js/util.js"></script>
 	<script src="assets/js/main.js"></script>
+	<script src="assets/js/site-config.js"></script>
+	<script src="assets/js/status-toggle.js"></script>
 
 </body>
 

@@ -1510,6 +1510,31 @@ input, select, textarea {
 			box-shadow: inset 0px 0px 0px 1px #3ecceb;
 		}
 
+		.button.disabled,
+		.button.disabled:hover {
+			background-image: none;
+			background-color: #999;
+			border-color: #888;
+			box-shadow: none;
+			color: #ccc;
+			cursor: default;
+			pointer-events: none;
+		}
+
+	#application-notice {
+		background-color: #f0f0f0;
+		border-bottom: 1px solid #ddd;
+		text-align: center;
+		padding: 1em 0;
+		display: none;
+	}
+
+		#application-notice p {
+			margin: 0;
+			font-size: 1.1em;
+			color: #555;
+		}
+
 /* Header */
 
 	#header-wrapper {
