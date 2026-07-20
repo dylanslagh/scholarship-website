@@ -1,0 +1,28 @@
+# Cloudflare Pages configuration for the Andresen Scholarships site + application backend.
+# The static site (index.html, assets/, etc.) is served from the repo root; the
+# functions/ directory is deployed automatically as Pages Functions.
+name = "andresen-scholarships"
+compatibility_date = "2025-01-15"
+pages_build_output_dir = "."
+
+# --- D1 (SQLite) database: stores application + recommendation records ---
+[[d1_databases]]
+binding = "DB"
+database_name = "andresen-scholarships"
+# Replace after running `wrangler d1 create andresen-scholarships` (see SETUP.md).
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# --- R2 bucket: stores uploaded files (transcripts, essays, signatures, recs) ---
+[[r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "andresen-scholarship-uploads"
+
+# --- Non-secret config (edit per season). Secrets live in .dev.vars / dashboard. ---
+[vars]
+APP_BASE_URL = "http://localhost:8788"
+APPLICATIONS_OPEN = "true"
+DEADLINE = "Saturday, March 13, 2027"
+RESEND_FROM = "Andresen Scholarships <scholarships@example.com>"
+BOARD_EMAILS = ""
+# When "true", emails are logged to the console instead of sent (safe for local demos).
+DEMO_MODE = "true"

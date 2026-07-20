@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<!--
+	Andresen Memorial Scholarships
+	Based on Minimaxing by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html lang="en">
+
+<head>
+	<title>Apply - Andresen Scholarships</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="Apply for the Andresen Ag or Memorial Scholarship — $1,500 awards for graduating seniors in Carroll County, Illinois." />
+	<meta name="robots" content="noindex" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<link rel="stylesheet" href="assets/css/app.css" />
+</head>
+
+<body>
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<div id="header-wrapper">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<header id="header">
+							<h1><a href="index.html" id="logo">Andresen Scholarships</a></h1>
+							<nav id="nav" aria-label="Main navigation">
+								<a href="index.html">Home</a>
+								<a href="ag-scholarship.html">Ag Scholarship</a>
+								<a href="scholarship.html">Memorial Scholarship</a>
+							</nav>
+						</header>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Banner -->
+		<div id="banner-wrapper">
+			<div class="container">
+				<div id="banner">
+					<h2>Scholarship Application</h2>
+					<span>2027 Andresen Ag &amp; Memorial Scholarships</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- Main -->
+		<div id="main">
+			<div class="container">
+				<div class="row main-row">
+					<div class="col-12">
+						<section>
+							<div class="app-form">
+								<p>Complete the form below to apply. All fields marked <span class="req">*</span> are
+									required. You will need to upload your <strong>high school transcript</strong> and
+									your <strong>essay</strong>, and provide your teacher's email so they can submit a
+									confidential recommendation.</p>
+
+								<div id="form-message" class="form-message" role="alert"></div>
+
+								<form id="application-form" novalidate>
+
+									<!-- Scholarship -->
+									<fieldset>
+										<legend>Scholarship</legend>
+										<div class="field radio-row">
+											<label>Which scholarship are you applying to? <span class="req">*</span></label>
+											<label><input type="radio" name="scholarship" value="ag" required> Andresen Ag Scholarship</label>
+											<label><input type="radio" name="scholarship" value="memorial" required> Andresen Memorial Scholarship</label>
+										</div>
+									</fieldset>
+
+									<!-- General Information -->
+									<fieldset>
+										<legend>General Information</legend>
+										<div class="field"><label>Full Name <span class="req">*</span></label>
+											<input type="text" name="full_name" required></div>
+										<div class="field two">
+											<div><label>Phone Number</label><input type="tel" name="phone"></div>
+											<div><label>Email <span class="req">*</span></label><input type="email" name="email" required></div>
+										</div>
+										<div class="field"><label>Mailing Address</label>
+											<input type="text" name="address" placeholder="Street, City, State, ZIP"></div>
+										<div class="field two">
+											<div><label>High School Attending <span class="req">*</span></label>
+												<input type="text" name="high_school" required></div>
+											<div><label>College / School Accepted At <span class="req">*</span></label>
+												<input type="text" name="college" required></div>
+										</div>
+										<div class="field two">
+											<div><label>Date Accepted</label><input type="date" name="date_accepted"></div>
+											<div><label>Major / Area of Study <span class="req">*</span></label>
+												<input type="text" name="major" required></div>
+										</div>
+										<div class="field"><label>Parent / Guardian Name(s) <span class="req">*</span></label>
+											<input type="text" name="parent_names" required></div>
+									</fieldset>
+
+									<!-- Academic Information -->
+									<fieldset>
+										<legend>Academic Information</legend>
+										<div class="field two">
+											<div><label>GPA</label><input type="text" name="gpa"></div>
+											<div><label>ACT / SAT Score</label><input type="text" name="act_sat"></div>
+										</div>
+										<div class="field two">
+											<div><label>Class Rank</label><input type="text" name="class_rank"></div>
+											<div><label>Number of Students in Class</label><input type="text" name="class_size"></div>
+										</div>
+										<div class="field"><label>Awards / Honors received in High School</label>
+											<textarea name="awards"></textarea></div>
+										<div class="field"><label>Clubs / Activities in the past 4 years</label>
+											<textarea name="activities" placeholder="Agriculture, Church, Community, sports, etc."></textarea></div>
+										<div class="field"><label>Upload High School Transcript <span class="req">*</span></label>
+											<input type="file" name="transcript" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+											<div class="hint">PDF, DOCX, JPG, or PNG, up to 10 MB.</div></div>
+									</fieldset>
+
+									<!-- Financial Information -->
+									<fieldset>
+										<legend>Financial Information</legend>
+										<div class="field"><label>How do you plan on financing your education?</label>
+											<textarea name="financing_plan"></textarea></div>
+										<div class="field yn-row"><label>Do you plan to work during the school year?</label>
+											<label><input type="radio" name="work_during_school" value="Yes"> Yes</label>
+											<label><input type="radio" name="work_during_school" value="No"> No</label>
+										</div>
+										<div class="field yn-row"><label>Have you received other scholarships?</label>
+											<label><input type="radio" name="other_scholarships" value="Yes"> Yes</label>
+											<label><input type="radio" name="other_scholarships" value="No"> No</label>
+										</div>
+										<div class="field two">
+											<div><label>% of your education paid for by your parents</label>
+												<input type="text" name="pct_parents" placeholder="e.g. 25%"></div>
+											<div><label>Parents' average yearly income (combined)</label>
+												<select name="parent_income">
+													<option value="">Select…</option>
+													<option>Under $25,000</option>
+													<option>$25,000 – $50,000</option>
+													<option>$50,000 – $75,000</option>
+													<option>$75,000 – $100,000</option>
+													<option>Over $100,000</option>
+												</select></div>
+										</div>
+										<div class="field two">
+											<div><label>Number of Dependents (other than self)</label>
+												<input type="text" name="num_dependents"></div>
+											<div><label>Age(s) of Dependents</label><input type="text" name="dependent_ages"></div>
+										</div>
+										<div class="field"><label>Parents' Occupation(s)</label>
+											<input type="text" name="parent_occupations"></div>
+									</fieldset>
+
+									<!-- Essay -->
+									<fieldset>
+										<legend>Essay</legend>
+										<div class="field">
+											<label>Upload your essay <span class="req">*</span></label>
+											<p class="hint" style="margin-top:0">In 300 words or less, describe your plans for your
+												education, your long-term and short-term goals, and what difference your education
+												would make to you, your family, and your community.</p>
+											<input type="file" name="essay" accept=".pdf,.doc,.docx" required>
+											<div class="hint">PDF or DOCX, up to 10 MB.</div>
+										</div>
+									</fieldset>
+
+									<!-- Teacher Recommendation -->
+									<fieldset>
+										<legend>Teacher Recommendation</legend>
+										<p class="hint" style="margin-top:0">We'll email your teacher a private link to submit
+											their recommendation confidentially. You will not see what they write.</p>
+										<div class="field two">
+											<div><label>Teacher's Name <span class="req">*</span></label>
+												<input type="text" name="teacher_name" required></div>
+											<div><label>Teacher's Email <span class="req">*</span></label>
+												<input type="email" name="teacher_email" required></div>
+										</div>
+									</fieldset>
+
+									<!-- Signatures -->
+									<fieldset>
+										<legend>Signatures</legend>
+										<div class="field">
+											<label>Applicant Signature <span class="req">*</span></label>
+											<div class="sig-wrap">
+												<canvas id="applicant-sig" class="sig-pad"></canvas>
+												<button type="button" id="clear-applicant-sig" class="sig-clear">Clear</button>
+											</div>
+										</div>
+										<div class="field">
+											<label>Parent / Guardian Signature <span class="req">*</span></label>
+											<div class="sig-wrap">
+												<canvas id="parent-sig" class="sig-pad"></canvas>
+												<button type="button" id="clear-parent-sig" class="sig-clear">Clear</button>
+											</div>
+										</div>
+									</fieldset>
+
+									<!-- Bot protection (Turnstile test key; replace in production — see SETUP.md) -->
+									<div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div>
+
+									<footer class="controls" style="margin-top:1.5em">
+										<button type="submit" id="submit-btn" class="button">Submit Application</button>
+									</footer>
+								</form>
+							</div>
+						</section>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Footer -->
+		<div id="footer-wrapper">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<div id="copyright">
+							&copy; Harold A and Marilyn Kay Andresen Charitable Trust. All rights reserved. | Design: <a
+								href="http://html5up.net">HTML5 UP</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+	<script src="assets/js/signature-pad.js"></script>
+	<script src="assets/js/apply.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,93 @@
+/* Shared styles for the application form, teacher recommendation, and admin dashboard.
+   Builds on the site's Minimaxing theme (accent #007b9d). */
+
+.app-form { max-width: 760px; margin: 0 auto; }
+
+.app-form fieldset {
+  border: 1px solid #dfe4e8;
+  border-radius: 10px;
+  padding: 1.5em 1.75em 1.75em;
+  margin: 0 0 1.75em 0;
+}
+.app-form legend {
+  font-weight: 700;
+  font-size: 1.15em;
+  color: #2e3538;
+  padding: 0 0.5em;
+}
+.app-form .field { margin: 0 0 1.15em 0; }
+.app-form .field.two { display: flex; gap: 1em; }
+.app-form .field.two > div { flex: 1; }
+
+.app-form label { display: block; font-weight: 600; margin-bottom: 0.35em; color: #41474e; }
+.app-form .req { color: #c0392b; }
+.app-form .hint { font-weight: 400; font-size: 0.85em; color: #8a9199; margin-top: 0.25em; }
+
+.app-form input[type="text"],
+.app-form input[type="email"],
+.app-form input[type="tel"],
+.app-form input[type="number"],
+.app-form input[type="date"],
+.app-form input[type="file"],
+.app-form select,
+.app-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6em 0.7em;
+  border: 1px solid #cfd6db;
+  border-radius: 7px;
+  background: #fff;
+  font-size: 1em;
+  color: #41474e;
+}
+.app-form textarea { min-height: 120px; resize: vertical; }
+.app-form input:focus, .app-form select:focus, .app-form textarea:focus {
+  outline: none;
+  border-color: #007b9d;
+  box-shadow: 0 0 0 2px rgba(0, 123, 157, 0.15);
+}
+
+.app-form .radio-row label,
+.app-form .yn-row label { display: inline-flex; align-items: center; font-weight: 400; margin-right: 1.5em; }
+.app-form .radio-row input, .app-form .yn-row input { width: auto; margin-right: 0.5em; }
+
+/* Signature pad */
+.sig-wrap { position: relative; }
+.sig-pad {
+  border: 1px dashed #b7c0c7;
+  border-radius: 7px;
+  background: #fbfcfd;
+  width: 100%;
+  height: 140px;
+  touch-action: none;
+  display: block;
+}
+.sig-clear {
+  background: none;
+  border: none;
+  color: #007b9d;
+  cursor: pointer;
+  font-size: 0.9em;
+  padding: 0.25em 0;
+}
+
+/* Messages */
+.form-message { padding: 0.9em 1.1em; border-radius: 7px; margin-bottom: 1.25em; display: none; }
+.form-message.error { background: #fdecea; color: #a5281a; border: 1px solid #f5c6c0; display: block; }
+.form-message.success { background: #eafaf1; color: #1d7a46; border: 1px solid #b8e6c9; display: block; }
+
+.word-count { font-size: 0.85em; color: #8a9199; margin-top: 0.25em; }
+
+/* Admin dashboard */
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th, .admin-table td { text-align: left; padding: 0.6em 0.75em; border-bottom: 1px solid #e6eaed; font-size: 0.95em; }
+.admin-table th { color: #6b737a; font-weight: 700; text-transform: uppercase; font-size: 0.75em; letter-spacing: 0.05em; }
+.admin-table tr:hover td { background: #f6f9fa; }
+.badge { display: inline-block; padding: 0.15em 0.6em; border-radius: 999px; font-size: 0.78em; font-weight: 700; }
+.badge.pending { background: #fef3e0; color: #a76a00; }
+.badge.submitted { background: #e6f6ec; color: #1d7a46; }
+
+.detail-grid { display: grid; grid-template-columns: 200px 1fr; gap: 0.5em 1.25em; margin-bottom: 1.5em; }
+.detail-grid dt { font-weight: 700; color: #6b737a; }
+.detail-grid dd { margin: 0; color: #41474e; white-space: pre-wrap; }
+.file-links a { display: inline-block; margin: 0 0.75em 0.5em 0; }

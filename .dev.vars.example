@@ -1,0 +1,16 @@
+# Copy this file to `.dev.vars` for local development (`.dev.vars` is gitignored).
+# In production these are set as Secrets in the Cloudflare Pages dashboard
+# (Settings -> Environment variables -> Encrypt), NOT committed to the repo.
+
+# Resend API key (https://resend.com). Leave blank while DEMO_MODE=true.
+RESEND_API_KEY=
+
+# Password the board uses to log into admin.html
+ADMIN_PASSWORD=change-me-locally
+
+# Random string used to sign admin session cookies (any long random value)
+SESSION_SECRET=local-dev-session-secret-change-me
+
+# Cloudflare Turnstile secret key (bot protection on the public form).
+# Leave blank locally to skip verification; the form uses Turnstile's test key.
+TURNSTILE_SECRET=

@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<!--
+	Andresen Memorial Scholarships
+	Based on Minimaxing by HTML5 UP
+-->
+<html lang="en">
+
+<head>
+	<title>Teacher Recommendation - Andresen Scholarships</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="robots" content="noindex" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<link rel="stylesheet" href="assets/css/app.css" />
+</head>
+
+<body>
+	<div id="page-wrapper">
+
+		<div id="header-wrapper">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<header id="header">
+							<h1><a href="index.html" id="logo">Andresen Scholarships</a></h1>
+							<nav id="nav" aria-label="Main navigation">
+								<a href="index.html">Home</a>
+							</nav>
+						</header>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="banner-wrapper">
+			<div class="container">
+				<div id="banner">
+					<h2>Teacher Recommendation</h2>
+					<span>Confidential — the applicant will not see your response</span>
+				</div>
+			</div>
+		</div>
+
+		<div id="main">
+			<div class="container">
+				<div class="row main-row">
+					<div class="col-12">
+						<section>
+							<div class="app-form">
+								<div id="rec-loading"><p>Loading…</p></div>
+
+								<div id="rec-invalid" style="display:none">
+									<div class="form-message error">This recommendation link is invalid or has expired.
+										Please contact the Andresen family if you believe this is an error.</div>
+								</div>
+
+								<div id="rec-done" style="display:none">
+									<div class="form-message success">Thank you — your recommendation has been submitted.
+										You may close this page.</div>
+								</div>
+
+								<div id="rec-form-wrap" style="display:none">
+									<p id="rec-intro"></p>
+									<div id="form-message" class="form-message" role="alert"></div>
+									<form id="rec-form" novalidate>
+										<fieldset>
+											<legend>Your Recommendation</legend>
+											<div class="field">
+												<label>Write your recommendation</label>
+												<textarea name="rec_text" placeholder="Share your assessment of this student's character, work ethic, and potential."></textarea>
+											</div>
+											<div class="field">
+												<label>…or upload a recommendation letter</label>
+												<input type="file" name="rec_file" accept=".pdf,.doc,.docx">
+												<div class="hint">PDF or DOCX, up to 10 MB. You may provide written text, a file, or both.</div>
+											</div>
+										</fieldset>
+										<footer class="controls">
+											<button type="submit" id="rec-submit" class="button">Submit Recommendation</button>
+										</footer>
+									</form>
+								</div>
+							</div>
+						</section>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="footer-wrapper">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<div id="copyright">
+							&copy; Harold A and Marilyn Kay Andresen Charitable Trust. All rights reserved. | Design: <a
+								href="http://html5up.net">HTML5 UP</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<script src="assets/js/recommend.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<!--
+	Andresen Memorial Scholarships — Board Dashboard
+	Based on Minimaxing by HTML5 UP
+-->
+<html lang="en">
+
+<head>
+	<title>Board Dashboard - Andresen Scholarships</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="robots" content="noindex" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<link rel="stylesheet" href="assets/css/app.css" />
+</head>
+
+<body>
+	<div id="page-wrapper">
+
+		<div id="header-wrapper">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<header id="header">
+							<h1><a href="index.html" id="logo">Andresen Scholarships</a></h1>
+							<nav id="nav" aria-label="Main navigation">
+								<a href="index.html">Home</a>
+								<a href="#" id="logout-link" style="display:none">Log out</a>
+							</nav>
+						</header>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="main">
+			<div class="container">
+				<div class="row main-row">
+					<div class="col-12">
+						<section>
+
+							<!-- Login -->
+							<div id="login-view" class="app-form" style="display:none">
+								<h2>Board Login</h2>
+								<div id="login-message" class="form-message" role="alert"></div>
+								<form id="login-form">
+									<div class="field">
+										<label>Password</label>
+										<input type="password" id="admin-password" autocomplete="current-password" required>
+									</div>
+									<footer class="controls">
+										<button type="submit" class="button" id="login-btn">Log In</button>
+									</footer>
+								</form>
+							</div>
+
+							<!-- List -->
+							<div id="list-view" style="display:none">
+								<h2>Applications</h2>
+								<p id="list-summary" class="hint"></p>
+								<table class="admin-table">
+									<thead>
+										<tr><th>Applicant</th><th>Scholarship</th><th>Submitted</th><th>Recommendation</th><th></th></tr>
+									</thead>
+									<tbody id="list-body"></tbody>
+								</table>
+								<p id="list-empty" style="display:none">No applications yet.</p>
+							</div>
+
+							<!-- Detail -->
+							<div id="detail-view" style="display:none">
+								<p><a href="#" id="back-link">&larr; Back to all applications</a></p>
+								<div id="detail-content"></div>
+							</div>
+
+						</section>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="footer-wrapper">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<div id="copyright">
+							&copy; Harold A and Marilyn Kay Andresen Charitable Trust. All rights reserved.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<script src="assets/js/admin.js"></script>
+</body>
+
+</html>

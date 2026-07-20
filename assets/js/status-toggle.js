@@ -29,7 +29,7 @@ $(function () {
 		if (open) {
 			el.textContent = el.getAttribute('data-open-text');
 		} else {
-			el.textContent = 'The 2026 application period has closed. Please check back next year for updated application information.';
+			el.textContent = 'The application period is currently closed. Please check back next year for updated application information.';
 		}
 	});
 
