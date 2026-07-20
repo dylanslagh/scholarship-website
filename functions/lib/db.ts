@@ -106,6 +106,8 @@ export interface ApplicationListItem {
   id: string;
   full_name: string;
   email: string;
+  high_school: string | null;
+  parent_names: string | null;
   scholarship: string;
   status: string;
   created_at: string;
@@ -114,7 +116,8 @@ export interface ApplicationListItem {
 
 export async function listApplications(env: Env): Promise<ApplicationListItem[]> {
   const result = await env.DB.prepare(
-    `SELECT a.id, a.full_name, a.email, a.scholarship, a.status, a.created_at,
+    `SELECT a.id, a.full_name, a.email, a.high_school, a.parent_names,
+            a.scholarship, a.status, a.created_at,
             r.status AS rec_status
        FROM applications a
        LEFT JOIN recommendations r ON r.application_id = a.id

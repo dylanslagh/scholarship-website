@@ -79,6 +79,8 @@
         : '<span class="badge pending">Awaiting teacher</span>';
       tr.innerHTML =
         "<td>" + esc(a.full_name) + "<div class='hint'>" + esc(a.email) + "</div></td>" +
+        "<td>" + esc(a.high_school || "—") + "</td>" +
+        "<td>" + esc(a.parent_names || "—") + "</td>" +
         "<td>" + (a.scholarship === "ag" ? "Ag" : "Memorial") + "</td>" +
         "<td>" + fmtDate(a.created_at) + "</td>" +
         "<td>" + recBadge + "</td>" +

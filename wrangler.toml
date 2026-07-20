@@ -9,20 +9,24 @@ pages_build_output_dir = "."
 [[d1_databases]]
 binding = "DB"
 database_name = "andresen-scholarships"
-# Replace after running `wrangler d1 create andresen-scholarships` (see SETUP.md).
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "59a0cf2f-e3d9-4860-b8a3-7fb4ca9c8589"
 
 # --- R2 bucket: stores uploaded files (transcripts, essays, signatures, recs) ---
 [[r2_buckets]]
 binding = "UPLOADS"
 bucket_name = "andresen-scholarship-uploads"
 
-# --- Non-secret config (edit per season). Secrets live in .dev.vars / dashboard. ---
+# --- Non-secret PRODUCTION config (edit per season). ---
+# These apply to the live site. For local testing, .dev.vars overrides them
+# (keeps localhost URLs + demo email mode). Secrets & board emails live in the
+# Cloudflare dashboard, never committed here.
 [vars]
-APP_BASE_URL = "http://localhost:8788"
+APP_BASE_URL = "https://andresen-scholarships.org"
 APPLICATIONS_OPEN = "true"
 DEADLINE = "Saturday, March 13, 2027"
-RESEND_FROM = "Andresen Scholarships <scholarships@example.com>"
+RESEND_FROM = "Andresen Scholarships <scholarships@andresen-scholarships.org>"
+# BOARD_EMAILS is set in the dashboard (keeps trustees' addresses out of the repo).
 BOARD_EMAILS = ""
-# When "true", emails are logged to the console instead of sent (safe for local demos).
-DEMO_MODE = "true"
+# "false" = send real emails via Resend. If no RESEND_API_KEY is set yet, the code
+# safely falls back to logging instead of sending, so this is safe to leave false.
+DEMO_MODE = "false"
