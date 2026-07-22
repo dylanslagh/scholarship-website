@@ -26,6 +26,19 @@
     detailView = document.getElementById("detail-view");
 
     document.getElementById("login-form").addEventListener("submit", onLogin);
+
+    var pwToggle = document.getElementById("pw-toggle");
+    if (pwToggle) {
+      pwToggle.addEventListener("click", function () {
+        var input = document.getElementById("admin-password");
+        var reveal = input.type === "password";
+        input.type = reveal ? "text" : "password";
+        pwToggle.textContent = reveal ? "Hide" : "Show";
+        pwToggle.setAttribute("aria-label", reveal ? "Hide password" : "Show password");
+        pwToggle.setAttribute("aria-pressed", reveal ? "true" : "false");
+        input.focus();
+      });
+    }
     document.getElementById("back-link").addEventListener("click", function (e) {
       e.preventDefault(); loadApplications(false);
     });

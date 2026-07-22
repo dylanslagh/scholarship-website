@@ -87,7 +87,8 @@ img { max-width: 100%; height: auto; }
 .site-nav a { text-decoration: none; color: var(--ink-soft); font-weight: 600; font-size: 0.98rem; padding: 0.2em 0; border-bottom: 2px solid transparent; }
 .site-nav a:hover { color: var(--green-deep); }
 .site-nav a[aria-current="page"] { color: var(--green-deep); border-bottom-color: var(--gold); }
-.site-nav .btn { border-bottom: none; }
+/* Button in the nav: keep the light button text (beats the grey .site-nav a rule). */
+.site-nav .btn, .site-nav .btn:hover { color: #fdfbf4; border-bottom: none; }
 
 /* ---------- Buttons ---------- */
 
@@ -345,6 +346,25 @@ img { max-width: 100%; height: auto; }
 .login-card h2 { margin-bottom: 0.2em; }
 .login-card .hint { margin-bottom: 1.4em; }
 .login-card form { text-align: left; }
+
+/* Show/hide password toggle */
+.pw-wrap { position: relative; }
+.pw-wrap input { padding-right: 4.4em; }
+.pw-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.5em;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--green);
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.3em 0.5em;
+}
+.pw-toggle:hover { color: var(--green-deep); text-decoration: underline; }
 
 /* Stat cards */
 .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.6rem; }
