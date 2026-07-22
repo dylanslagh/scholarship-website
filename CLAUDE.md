@@ -18,13 +18,19 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
 ## Key files
 - Public pages: `apply.html` (application form), `recommend.html` (confidential teacher
   recommendation, opened via a tokenized link), `admin.html` (password-gated board dashboard).
-  Info pages: `index.html`, `ag-scholarship.html`, `scholarship.html`.
+  Info pages: `index.html`, `ag-scholarship.html`, `scholarship.html`. Also `404.html`, `favicon.svg`.
 - Backend: `functions/api/*` — `apply.ts`, `recommendation/[token].ts`, `admin/*`
-  (login, applications, application/[id], file/[[key]]); `functions/api/admin/_middleware.ts`
-  gates admin routes. Shared code in `functions/lib/*` (env, db, storage, auth, email, validation).
-- `schema.sql` — D1 tables (`applications`, `recommendations`).
+  (login, applications, application/[id] incl. PATCH for board review, file/[[key]], export = CSV);
+  `functions/api/admin/_middleware.ts` gates admin routes. Shared code in `functions/lib/*`
+  (env, db, storage, auth, email, validation).
+- `schema.sql` — D1 tables (`applications`, `recommendations`). `migrations/0002_board_review.sql`
+  adds `score` + `board_notes` to an existing DB (`npm run db:migrate:local` / `:remote` — the
+  remote migration still needs to be run before the redesign branch goes live).
 - `wrangler.toml` — Cloudflare config: D1/R2 bindings + production `[vars]`.
-- Front-end JS: `assets/js/{apply,admin,recommend,signature-pad}.js`; styles in `assets/css/app.css`.
+- Front-end JS: `assets/js/{apply,admin,recommend,signature-pad,site-config,status-toggle}.js`.
+- Styles: `assets/css/site.css` is the whole design system (2026-07 redesign, no jQuery/template
+  deps). `assets/css/{main,app}.css` + `assets/js/{jquery.min,util,main,breakpoints.min,browser.min}.js`
+  are the retired Minimaxing-era files — unreferenced by the redesigned pages, kept for old branches.
 - `SETUP.md` — full first-time setup walkthrough.
 
 ## Cloudflare resources (this account)

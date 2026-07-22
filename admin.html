@@ -1,8 +1,4 @@
-<!DOCTYPE HTML>
-<!--
-	Andresen Memorial Scholarships — Board Dashboard
-	Based on Minimaxing by HTML5 UP
--->
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,88 +6,121 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="robots" content="noindex" />
-	<link rel="stylesheet" href="assets/css/main.css" />
-	<link rel="stylesheet" href="assets/css/app.css" />
+	<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/site.css" />
 </head>
 
-<body>
-	<div id="page-wrapper">
+<body class="admin-body">
 
-		<div id="header-wrapper">
-			<div class="container">
-				<div class="row">
-					<div class="col-12">
-						<header id="header">
-							<h1><a href="index.html" id="logo">Andresen Scholarships</a></h1>
-							<nav id="nav" aria-label="Main navigation">
-								<a href="index.html">Home</a>
-								<a href="#" id="logout-link" style="display:none">Log out</a>
-							</nav>
-						</header>
-					</div>
-				</div>
-			</div>
+	<!-- Top bar -->
+	<header class="admin-top">
+		<div class="wrap">
+			<a class="brand" href="admin.html">
+				<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<rect width="64" height="64" rx="14" fill="#f2eeda"/>
+					<g fill="#2b4d2e">
+						<path d="M32 56a2 2 0 0 1-2-2V26a2 2 0 0 1 4 0v28a2 2 0 0 1-2 2z"/>
+						<path d="M32 26c0-9-5.2-14.9-12.4-16.7C19 18 23.7 24.4 32 26z"/>
+						<path d="M32 26c0-9 5.2-14.9 12.4-16.7C45 18 40.3 24.4 32 26z"/>
+						<path d="M32 37.5c0-7.6-4.5-12.7-10.9-14.2-.4 7.6 3.6 13 10.9 14.2z"/>
+						<path d="M32 37.5c0-7.6 4.5-12.7 10.9-14.2.4 7.6-3.6 13-10.9 14.2z"/>
+						<path d="M32 48c0-6.8-4-11.3-9.7-12.6-.3 6.8 3.2 11.5 9.7 12.6z"/>
+						<path d="M32 48c0-6.8 4-11.3 9.7-12.6.3 6.8-3.2 11.5-9.7 12.6z"/>
+					</g>
+				</svg>
+				<span>
+					<span class="brand-name">Andresen Scholarships</span>
+					<span class="brand-sub">Board Dashboard &middot; 2027 Season</span>
+				</span>
+			</a>
+			<nav>
+				<a href="index.html">View Site</a>
+				<a href="#" id="logout-link" style="display:none">Log Out</a>
+			</nav>
 		</div>
+	</header>
 
-		<div id="main">
-			<div class="container">
-				<div class="row main-row">
-					<div class="col-12">
-						<section>
+	<main class="admin-main">
+		<div class="wrap">
 
-							<!-- Login -->
-							<div id="login-view" class="app-form" style="display:none">
-								<h2>Board Login</h2>
-								<div id="login-message" class="form-message" role="alert"></div>
-								<form id="login-form">
-									<div class="field">
-										<label>Password</label>
-										<input type="password" id="admin-password" autocomplete="current-password" required>
-									</div>
-									<footer class="controls">
-										<button type="submit" class="button" id="login-btn">Log In</button>
-									</footer>
-								</form>
-							</div>
-
-							<!-- List -->
-							<div id="list-view" style="display:none">
-								<h2>Applications</h2>
-								<p id="list-summary" class="hint"></p>
-								<table class="admin-table">
-									<thead>
-										<tr><th>Applicant</th><th>School</th><th>Parent/Guardian(s)</th><th>Scholarship</th><th>Submitted</th><th>Recommendation</th><th></th></tr>
-									</thead>
-									<tbody id="list-body"></tbody>
-								</table>
-								<p id="list-empty" style="display:none">No applications yet.</p>
-							</div>
-
-							<!-- Detail -->
-							<div id="detail-view" style="display:none">
-								<p><a href="#" id="back-link">&larr; Back to all applications</a></p>
-								<div id="detail-content"></div>
-							</div>
-
-						</section>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="footer-wrapper">
-			<div class="container">
-				<div class="row">
-					<div class="col-12">
-						<div id="copyright">
-							&copy; Harold A and Marilyn Kay Andresen Charitable Trust. All rights reserved.
+			<!-- Login -->
+			<div id="login-view" style="display:none">
+				<div class="card login-card">
+					<h2>Board Sign-in</h2>
+					<p class="hint">Enter the board password to review applications.</p>
+					<div id="login-message" class="form-message" role="alert"></div>
+					<form id="login-form" class="app-form">
+						<div class="field">
+							<label for="admin-password">Password</label>
+							<input type="password" id="admin-password" autocomplete="current-password" required>
 						</div>
-					</div>
+						<footer class="controls" style="text-align:center">
+							<button type="submit" class="btn" id="login-btn" style="width:100%">Log In</button>
+						</footer>
+					</form>
 				</div>
 			</div>
-		</div>
 
-	</div>
+			<!-- List -->
+			<div id="list-view" style="display:none">
+
+				<div class="stat-row" id="stat-row"></div>
+
+				<div class="toolbar">
+					<input type="search" id="filter-search" placeholder="Search name, school, college, major…" aria-label="Search applications">
+					<select id="filter-scholarship" aria-label="Filter by scholarship">
+						<option value="">All scholarships</option>
+						<option value="ag">Ag</option>
+						<option value="memorial">Memorial</option>
+					</select>
+					<select id="filter-status" aria-label="Filter by status">
+						<option value="">All statuses</option>
+						<option value="submitted">New</option>
+						<option value="in_review">In review</option>
+						<option value="awarded">Awarded</option>
+						<option value="not_awarded">Not awarded</option>
+					</select>
+					<select id="filter-rec" aria-label="Filter by recommendation">
+						<option value="">Any recommendation</option>
+						<option value="submitted">Received</option>
+						<option value="pending">Awaiting teacher</option>
+					</select>
+					<span class="spacer"></span>
+					<a href="/api/admin/export" class="btn ghost small" download>Export CSV</a>
+				</div>
+
+				<div class="table-card">
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th class="sortable" data-sort="full_name">Applicant</th>
+								<th class="sortable" data-sort="high_school">School</th>
+								<th>Scholarship</th>
+								<th class="sortable" data-sort="gpa">GPA</th>
+								<th class="sortable" data-sort="created_at">Submitted</th>
+								<th>Recommendation</th>
+								<th>Status</th>
+								<th class="sortable" data-sort="score">Score</th>
+							</tr>
+						</thead>
+						<tbody id="list-body"></tbody>
+					</table>
+					<p id="list-empty" style="display:none;padding:1.5rem;text-align:center;color:var(--ink-faint)">No applications match.</p>
+				</div>
+				<p class="list-foot" id="list-summary"></p>
+			</div>
+
+			<!-- Detail -->
+			<div id="detail-view" style="display:none">
+				<p class="back-link"><a href="#" id="back-link">&larr; Back to all applications</a></p>
+				<div id="detail-content"></div>
+			</div>
+
+		</div>
+	</main>
 
 	<script src="assets/js/admin.js"></script>
 </body>

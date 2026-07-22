@@ -1,8 +1,4 @@
-<!DOCTYPE HTML>
-<!--
-	Andresen Memorial Scholarships
-	Based on Minimaxing by HTML5 UP
--->
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,97 +6,96 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="robots" content="noindex" />
-	<link rel="stylesheet" href="assets/css/main.css" />
-	<link rel="stylesheet" href="assets/css/app.css" />
+	<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/site.css" />
 </head>
 
 <body>
-	<div id="page-wrapper">
 
-		<div id="header-wrapper">
-			<div class="container">
-				<div class="row">
-					<div class="col-12">
-						<header id="header">
-							<h1><a href="index.html" id="logo">Andresen Scholarships</a></h1>
-							<nav id="nav" aria-label="Main navigation">
-								<a href="index.html">Home</a>
-							</nav>
-						</header>
-					</div>
-				</div>
-			</div>
+	<!-- Header -->
+	<header class="site-head">
+		<div class="wrap">
+			<a class="brand" href="index.html">
+				<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<rect width="64" height="64" rx="14" fill="#2b4d2e"/>
+					<g fill="#e6c464">
+						<path d="M32 56a2 2 0 0 1-2-2V26a2 2 0 0 1 4 0v28a2 2 0 0 1-2 2z"/>
+						<path d="M32 26c0-9-5.2-14.9-12.4-16.7C19 18 23.7 24.4 32 26z"/>
+						<path d="M32 26c0-9 5.2-14.9 12.4-16.7C45 18 40.3 24.4 32 26z"/>
+						<path d="M32 37.5c0-7.6-4.5-12.7-10.9-14.2-.4 7.6 3.6 13 10.9 14.2z"/>
+						<path d="M32 37.5c0-7.6 4.5-12.7 10.9-14.2.4 7.6-3.6 13-10.9 14.2z"/>
+						<path d="M32 48c0-6.8-4-11.3-9.7-12.6-.3 6.8 3.2 11.5 9.7 12.6z"/>
+						<path d="M32 48c0-6.8 4-11.3 9.7-12.6.3 6.8-3.2 11.5-9.7 12.6z"/>
+					</g>
+				</svg>
+				<span>
+					<span class="brand-name">Andresen Scholarships</span>
+					<span class="brand-sub">Carroll County, Illinois &middot; Since 1985</span>
+				</span>
+			</a>
+			<nav class="site-nav" aria-label="Main navigation">
+				<a href="index.html">Home</a>
+			</nav>
 		</div>
+	</header>
 
-		<div id="banner-wrapper">
-			<div class="container">
-				<div id="banner">
-					<h2>Teacher Recommendation</h2>
-					<span>Confidential — the applicant will not see your response</span>
-				</div>
-			</div>
+	<!-- Title -->
+	<div class="page-title" style="text-align:center">
+		<div class="wrap">
+			<span class="eyebrow">Confidential — the applicant will not see your response</span>
+			<h1>Teacher Recommendation</h1>
 		</div>
-
-		<div id="main">
-			<div class="container">
-				<div class="row main-row">
-					<div class="col-12">
-						<section>
-							<div class="app-form">
-								<div id="rec-loading"><p>Loading…</p></div>
-
-								<div id="rec-invalid" style="display:none">
-									<div class="form-message error">This recommendation link is invalid or has expired.
-										Please contact the Andresen family if you believe this is an error.</div>
-								</div>
-
-								<div id="rec-done" style="display:none">
-									<div class="form-message success">Thank you — your recommendation has been submitted.
-										You may close this page.</div>
-								</div>
-
-								<div id="rec-form-wrap" style="display:none">
-									<p id="rec-intro"></p>
-									<div id="form-message" class="form-message" role="alert"></div>
-									<form id="rec-form" novalidate>
-										<fieldset>
-											<legend>Your Recommendation</legend>
-											<div class="field">
-												<label>Write your recommendation</label>
-												<textarea name="rec_text" placeholder="Share your assessment of this student's character, work ethic, and potential."></textarea>
-											</div>
-											<div class="field">
-												<label>…or upload a recommendation letter</label>
-												<input type="file" name="rec_file" accept=".pdf,.doc,.docx">
-												<div class="hint">PDF or DOCX, up to 10 MB. You may provide written text, a file, or both.</div>
-											</div>
-										</fieldset>
-										<footer class="controls">
-											<button type="submit" id="rec-submit" class="button">Submit Recommendation</button>
-										</footer>
-									</form>
-								</div>
-							</div>
-						</section>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="footer-wrapper">
-			<div class="container">
-				<div class="row">
-					<div class="col-12">
-						<div id="copyright">
-							&copy; Harold A and Marilyn Kay Andresen Charitable Trust. All rights reserved. | Design: <a
-								href="http://html5up.net">HTML5 UP</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
 	</div>
+
+	<!-- Main -->
+	<div class="wrap narrow" style="padding-top:1.6rem;padding-bottom:3rem">
+		<div class="app-form">
+			<div id="rec-loading"><p>Loading…</p></div>
+
+			<div id="rec-invalid" style="display:none">
+				<div class="form-message error">This recommendation link is invalid or has expired.
+					Please contact the Andresen family if you believe this is an error.</div>
+			</div>
+
+			<div id="rec-done" style="display:none">
+				<div class="form-message success">Thank you — your recommendation has been submitted.
+					You may close this page.</div>
+			</div>
+
+			<div id="rec-form-wrap" style="display:none">
+				<p id="rec-intro"></p>
+				<div id="form-message" class="form-message" role="alert"></div>
+				<form id="rec-form" novalidate>
+					<fieldset>
+						<legend>Your Recommendation</legend>
+						<div class="field">
+							<label>Write your recommendation</label>
+							<textarea name="rec_text" placeholder="Share your assessment of this student's character, work ethic, and potential."></textarea>
+						</div>
+						<div class="field">
+							<label>…or upload a recommendation letter</label>
+							<input type="file" name="rec_file" accept=".pdf,.doc,.docx">
+							<div class="hint">PDF or DOCX, up to 10 MB. You may provide written text, a file, or both.</div>
+						</div>
+					</fieldset>
+					<footer class="controls">
+						<button type="submit" id="rec-submit" class="btn">Submit Recommendation</button>
+					</footer>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<footer class="site-foot">
+		<div class="wrap">
+			<p class="memorial">In loving memory of Harold, Kay, Randy &amp; Rodney Andresen</p>
+			<p class="fine">&copy; Harold A and Marilyn Kay Andresen Charitable Trust &middot; Chadwick, Illinois. All rights reserved.</p>
+		</div>
+	</footer>
 
 	<script src="assets/js/recommend.js"></script>
 </body>

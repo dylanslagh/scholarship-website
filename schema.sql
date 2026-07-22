@@ -4,8 +4,12 @@
 CREATE TABLE IF NOT EXISTS applications (
   id            TEXT PRIMARY KEY,
   scholarship   TEXT NOT NULL,            -- 'ag' | 'memorial'
-  status        TEXT NOT NULL DEFAULT 'submitted',  -- 'submitted' | 'reviewed'
+  status        TEXT NOT NULL DEFAULT 'submitted',  -- 'submitted' | 'in_review' | 'awarded' | 'not_awarded'
   created_at    TEXT NOT NULL,            -- ISO 8601 timestamp
+
+  -- Board review (admin dashboard; see migrations/0002_board_review.sql)
+  score         INTEGER,                  -- board score, 1–5
+  board_notes   TEXT,                     -- shared board notes
 
   -- General information
   full_name     TEXT NOT NULL,

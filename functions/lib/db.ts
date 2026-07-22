@@ -32,7 +32,13 @@ export interface ApplicationRecord {
   essay_key: string | null;
   applicant_sig_key: string | null;
   parent_sig_key: string | null;
+  // Board review fields (not set at submission time)
+  score?: number | null;
+  board_notes?: string | null;
 }
+
+export const APPLICATION_STATUSES = ["submitted", "in_review", "awarded", "not_awarded"] as const;
+export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
 
 export interface RecommendationRecord {
   id: string;
@@ -108,8 +114,12 @@ export interface ApplicationListItem {
   email: string;
   high_school: string | null;
   parent_names: string | null;
+  college: string | null;
+  major: string | null;
+  gpa: string | null;
   scholarship: string;
   status: string;
+  score: number | null;
   created_at: string;
   rec_status: string | null;
 }
@@ -117,11 +127,50 @@ export interface ApplicationListItem {
 export async function listApplications(env: Env): Promise<ApplicationListItem[]> {
   const result = await env.DB.prepare(
     `SELECT a.id, a.full_name, a.email, a.high_school, a.parent_names,
-            a.scholarship, a.status, a.created_at,
+            a.college, a.major, a.gpa,
+            a.scholarship, a.status, a.score, a.created_at,
             r.status AS rec_status
        FROM applications a
        LEFT JOIN recommendations r ON r.application_id = a.id
       ORDER BY a.created_at DESC`
   ).all<ApplicationListItem>();
+  return result.results ?? [];
+}
+
+// Update the board-review fields on an application.
+export async function updateApplicationReview(
+  env: Env,
+  id: string,
+  fields: { status?: string; score?: number | null; board_notes?: string | null }
+): Promise<boolean> {
+  const sets: string[] = [];
+  const values: unknown[] = [];
+  if (fields.status !== undefined) { sets.push("status = ?"); values.push(fields.status); }
+  if (fields.score !== undefined) { sets.push("score = ?"); values.push(fields.score); }
+  if (fields.board_notes !== undefined) { sets.push("board_notes = ?"); values.push(fields.board_notes); }
+  if (!sets.length) return false;
+  const result = await env.DB.prepare(
+    `UPDATE applications SET ${sets.join(", ")} WHERE id = ?`
+  ).bind(...values, id).run();
+  return (result.meta?.changes ?? 0) > 0;
+}
+
+// Full rows joined with recommendation info, for the CSV export.
+export interface ApplicationExportRow extends ApplicationRecord {
+  teacher_name: string | null;
+  teacher_email: string | null;
+  rec_status: string | null;
+  rec_submitted_at: string | null;
+}
+
+export async function listApplicationsFull(env: Env): Promise<ApplicationExportRow[]> {
+  const result = await env.DB.prepare(
+    `SELECT a.*,
+            r.teacher_name, r.teacher_email,
+            r.status AS rec_status, r.submitted_at AS rec_submitted_at
+       FROM applications a
+       LEFT JOIN recommendations r ON r.application_id = a.id
+      ORDER BY a.created_at DESC`
+  ).all<ApplicationExportRow>();
   return result.results ?? [];
 }
