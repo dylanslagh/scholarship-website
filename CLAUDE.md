@@ -24,8 +24,9 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   `functions/api/admin/_middleware.ts` gates admin routes. Shared code in `functions/lib/*`
   (env, db, storage, auth, email, validation).
 - `schema.sql` — D1 tables (`applications`, `recommendations`). `migrations/0002_board_review.sql`
-  adds `score` + `board_notes` to an existing DB (`npm run db:migrate:local` / `:remote` — the
-  remote migration still needs to be run before the redesign branch goes live).
+  adds `score` + `board_notes`. **Applied to both local and remote D1.** Gotcha: `db:migrate:remote`
+  (`wrangler d1 execute --remote --file=…`) can fail with a Cloudflare **import API** error; running
+  each `ALTER` as a separate `wrangler d1 execute --remote --command "…"` uses the query API and works.
 - `wrangler.toml` — Cloudflare config: D1/R2 bindings + production `[vars]`.
 - Front-end JS: `assets/js/{apply,admin,recommend,signature-pad,site-config,status-toggle}.js`.
 - Styles: `assets/css/site.css` is the whole design system (2026-07 redesign, no jQuery/template
