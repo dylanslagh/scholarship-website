@@ -34,3 +34,23 @@ RESEND_FROM = "Andresen Scholarships <scholarships@andresen-scholarships.org>"
 # "false" = send real emails via Resend. If no RESEND_API_KEY is set yet, the code
 # safely falls back to logging instead of sending, so this is safe to leave false.
 DEMO_MODE = "false"
+
+# --- PREVIEW config (branch deploys, *.pages.dev). ---
+# Only reason this block exists: APP_BASE_URL. Without it, an application submitted
+# on a preview branch sends emails whose "submit your recommendation" and "board
+# dashboard" links point at the LIVE site. They happen to work (preview and
+# production share one D1 database), but you'd never actually be testing the
+# preview's own pages.
+#
+# NOTE: vars are NOT merged between environments — this block fully replaces the
+# [vars] above for preview deploys, so every key has to be repeated here even when
+# the value is identical. Adding a var above means adding it here too.
+#
+# APP_BASE_URL below is the *branch alias* for redesign-2027. If you test from a
+# differently-named branch, update it or the links will point at the wrong preview.
+[env.preview.vars]
+APP_BASE_URL = "https://redesign-2027.scholarship-website.pages.dev"
+APPLICATIONS_OPEN = "true"
+DEADLINE = "Saturday, March 13, 2027"
+RESEND_FROM = "Andresen Scholarships <scholarships@andresen-scholarships.org>"
+DEMO_MODE = "false"
