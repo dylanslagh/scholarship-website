@@ -76,9 +76,17 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   `andresen-scholarships.org` verified (DNS records added) and `RESEND_API_KEY` +
   `BOARD_EMAILS` set for **Production** (all three trustees) and **Preview** (Dylan only,
   so branch testing doesn't spam the family).
-- **Stage 2 (before opening to real students):** Turnstile (real site key in `apply.html`,
-  `TURNSTILE_SECRET` in the dashboard); consider `APPLICATIONS_OPEN="false"` until the
-  2027 season actually opens.
+- **Verified end-to-end on the preview 2026-07-23:** application submit → D1 record + R2
+  uploads → all four emails delivered via Resend → teacher recommendation submitted →
+  board score/notes saved. The whole season workflow works on real infrastructure.
+- **⚠️ The live site has no backend yet.** `andresen-scholarships.org` still serves the
+  pre-redesign static HTML5 UP site — hitting any `/api/*` path there returns the old
+  homepage, not a function. All of `functions/` lives only on `redesign-2027`. **Merging
+  that branch to `main` is the actual launch step**, and nothing on production works until
+  it happens. (This is also why emailed links to the live site went nowhere during testing.)
+- **Stage 2 (before opening to real students):** merge `redesign-2027` → `main`; Turnstile
+  (real site key in `apply.html`, `TURNSTILE_SECRET` in the dashboard); set
+  `APPLICATIONS_OPEN="false"` in `[vars]` until the 2027 season actually opens.
 - The 2026 applications are **not** migrated — the system starts fresh for 2027.
 
 ### Planned: send arbitrary email from the board dashboard
