@@ -42,12 +42,28 @@ DEMO_MODE = "false"
 # production share one D1 database), but you'd never actually be testing the
 # preview's own pages.
 #
-# NOTE: vars are NOT merged between environments — this block fully replaces the
-# [vars] above for preview deploys, so every key has to be repeated here even when
-# the value is identical. Adding a var above means adding it here too.
+# NOTE: NOTHING is merged between environments — not vars and not bindings. This
+# block fully replaces the config above for preview deploys, so every key has to be
+# repeated here even when the value is identical. Adding a var or a binding above
+# means adding it here too, or preview silently loses it.
+#
+# This bit them once already: adding [env.preview.vars] without the d1/r2 bindings
+# below stripped DB and UPLOADS from preview, and every admin API call 500'd while
+# the page shell still rendered fine — so it looked like a blank dashboard, not an
+# error. If preview breaks right after a wrangler.toml edit, check here first.
 #
 # APP_BASE_URL below is the *branch alias* for redesign-2027. If you test from a
 # differently-named branch, update it or the links will point at the wrong preview.
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "andresen-scholarships"
+database_id = "59a0cf2f-e3d9-4860-b8a3-7fb4ca9c8589"
+
+[[env.preview.r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "andresen-scholarship-uploads"
+
 [env.preview.vars]
 APP_BASE_URL = "https://redesign-2027.scholarship-website.pages.dev"
 APPLICATIONS_OPEN = "true"
