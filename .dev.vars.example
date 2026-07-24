@@ -11,6 +11,10 @@ ADMIN_PASSWORD=change-me-locally
 # Random string used to sign admin session cookies (any long random value)
 SESSION_SECRET=local-dev-session-secret-change-me
 
+# Board notification recipients, comma-separated. Kept out of wrangler.toml so
+# the trustees' addresses aren't in the repo; set for real in the dashboard.
+BOARD_EMAILS=someone@example.com,someone-else@example.com
+
 # Cloudflare Turnstile secret key (bot protection on the public form).
 # Leave blank locally to skip verification; the form uses Turnstile's test key.
 TURNSTILE_SECRET=

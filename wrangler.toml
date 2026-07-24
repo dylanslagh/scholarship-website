@@ -27,8 +27,10 @@ APP_BASE_URL = "https://andresen-scholarships.org"
 APPLICATIONS_OPEN = "true"
 DEADLINE = "Saturday, March 13, 2027"
 RESEND_FROM = "Andresen Scholarships <scholarships@andresen-scholarships.org>"
-# BOARD_EMAILS is set in the dashboard (keeps trustees' addresses out of the repo).
-BOARD_EMAILS = ""
+# BOARD_EMAILS is NOT listed here on purpose. It's set as a dashboard *secret*
+# (per environment) to keep the trustees' addresses out of the repo. Don't add it
+# back as an empty [vars] entry — for Pages projects this file wins over dashboard
+# plaintext vars, so an empty value here would silently blank out the recipients.
 # "false" = send real emails via Resend. If no RESEND_API_KEY is set yet, the code
 # safely falls back to logging instead of sending, so this is safe to leave false.
 DEMO_MODE = "false"

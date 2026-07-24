@@ -101,20 +101,30 @@ In the Pages project **Settings → Functions**, bind:
 - **D1 database** → variable name `DB` → `andresen-scholarships`
 - **R2 bucket** → variable name `UPLOADS` → `andresen-scholarship-uploads`
 
-In **Settings → Environment variables**, set (mark secrets as *Encrypt*):
+The **plaintext** settings (`APP_BASE_URL`, `RESEND_FROM`, `DEADLINE`,
+`APPLICATIONS_OPEN`, `DEMO_MODE`) live in `wrangler.toml` under `[vars]` — edit them
+there and push. Because this project has a `wrangler.toml`, plaintext variables typed
+into the dashboard are **ignored**, so don't set them in both places.
 
-| Name | Type | Value |
-|------|------|-------|
-| `APP_BASE_URL` | plaintext | your live URL, e.g. `https://andresenscholarships.org` |
-| `BOARD_EMAILS` | plaintext | comma-separated trustee emails |
-| `RESEND_FROM` | plaintext | verified sender address |
-| `DEADLINE` | plaintext | display deadline |
-| `APPLICATIONS_OPEN` | plaintext | `true` / `false` (server-side gate) |
-| `DEMO_MODE` | plaintext | `false` in production |
-| `RESEND_API_KEY` | secret | from Resend |
-| `ADMIN_PASSWORD` | secret | board password |
-| `SESSION_SECRET` | secret | long random string |
-| `TURNSTILE_SECRET` | secret | from Turnstile |
+Everything below is a **secret**. Set each one in **Settings → Variables and Secrets**
+(mark *Encrypt*), separately for **Production** and **Preview**:
+
+| Name | Value |
+|------|-------|
+| `BOARD_EMAILS` | comma-separated trustee emails (a secret so the addresses stay out of the repo) |
+| `RESEND_API_KEY` | from Resend |
+| `ADMIN_PASSWORD` | board password |
+| `SESSION_SECRET` | long random string |
+| `TURNSTILE_SECRET` | from Turnstile |
+
+Or from the terminal, which prompts for the value instead of putting it in your shell history:
+
+```
+npx.cmd wrangler pages secret put RESEND_API_KEY --project-name scholarship-website
+```
+
+Add `--env preview` to set the Preview copy. Note the Pages **project** is named
+`scholarship-website`, which is not the same as the `name` field in `wrangler.toml`.
 
 ---
 

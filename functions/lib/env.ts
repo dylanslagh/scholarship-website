@@ -13,10 +13,10 @@ export interface Env {
   APPLICATIONS_OPEN: string; // "true" | "false"
   DEADLINE: string;
   RESEND_FROM: string;
-  BOARD_EMAILS: string; // comma-separated
   DEMO_MODE: string; // "true" => log emails instead of sending
 
   // Secrets (.dev.vars locally / dashboard in production)
+  BOARD_EMAILS?: string; // comma-separated notification recipients
   RESEND_API_KEY?: string;
   ADMIN_PASSWORD?: string;
   SESSION_SECRET?: string;

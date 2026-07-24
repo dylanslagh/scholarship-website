@@ -46,6 +46,13 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
 - **Secrets** (`ADMIN_PASSWORD`, `SESSION_SECRET`, `RESEND_API_KEY`, `TURNSTILE_SECRET`) and
   `BOARD_EMAILS` live in the **Cloudflare dashboard** (Pages → Settings → Variables and Secrets),
   never committed. They are set per-environment (Production / Preview).
+  CLI equivalent: `npx.cmd wrangler pages secret put NAME --project-name scholarship-website`
+  (add `--env preview`); it prompts for the value so it stays out of shell history.
+- **Gotcha:** because this project has a `wrangler.toml`, its `[vars]` **override** any
+  plaintext variable typed into the dashboard. So `BOARD_EMAILS` is deliberately *absent*
+  from `[vars]` — an empty entry there would shadow the dashboard secret and silently send
+  board notifications to nobody. Keep non-secret config in `wrangler.toml`, secrets in the
+  dashboard, and don't duplicate a name across both.
 - `DEMO_MODE="true"` — or a missing `RESEND_API_KEY` — makes email **log instead of send**
   (safe). Set `false` + provide the key to send for real. See `functions/lib/env.ts` `isDemoMode`.
 - `APPLICATIONS_OPEN` is the **server-side** open/closed gate. Mirror it in
@@ -65,8 +72,25 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
 
 ## Status / TODO
 - **Done:** full application system; D1 + R2 created; live schema applied; production secrets
-  `ADMIN_PASSWORD` + `SESSION_SECRET` set in the dashboard.
-- **Stage 2 (before opening to real students):** add `RESEND_API_KEY`, `BOARD_EMAILS`, and
-  Turnstile (real site key in `apply.html`, `TURNSTILE_SECRET` in the dashboard); consider
-  `APPLICATIONS_OPEN="false"` until the 2027 season actually opens.
+  `ADMIN_PASSWORD` + `SESSION_SECRET` set in the dashboard. Resend domain
+  `andresen-scholarships.org` verified (DNS records added) and `RESEND_API_KEY` +
+  `BOARD_EMAILS` set for **Production** (all three trustees) and **Preview** (Dylan only,
+  so branch testing doesn't spam the family).
+- **Stage 2 (before opening to real students):** Turnstile (real site key in `apply.html`,
+  `TURNSTILE_SECRET` in the dashboard); consider `APPLICATIONS_OPEN="false"` until the
+  2027 season actually opens.
 - The 2026 applications are **not** migrated — the system starts fresh for 2027.
+
+### Planned: send arbitrary email from the board dashboard
+Dylan wants to email anyone (applicants, teachers, one-offs) from `admin.html` — both
+free-form and from saved templates. **Deliberately not built yet**; the wording and
+workflow are a later decision, so don't lock the design down prematurely. What's already
+settled if you pick this up:
+- `sendEmail()` in `functions/lib/email.ts` already accepts an arbitrary `to` array and a
+  `replyTo` — the transport is done, only an admin UI + route is missing.
+- Send **one message per recipient**, not one with everyone in `To` — applicants must not
+  see each other's addresses.
+- Set `replyTo` to a real monitored inbox; nobody reads `scholarships@andresen-scholarships.org`.
+- Log every send to D1. Mid-season the board needs to answer "did we already tell this student?"
+- Resend free tier is 100/day, 3,000/month — irrelevant at ~40 applicants, don't design around it.
+- Put it behind the existing `functions/api/admin/_middleware.ts` auth like every other admin route.
