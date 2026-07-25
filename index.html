@@ -67,14 +67,17 @@
 	</section>
 
 	<div class="ornament" aria-hidden="true">
+		<!-- An ear of corn, husk leaves tucked in close to the cob. The ornament is
+		     a single colour (currentColor <- .ornament svg { color: var(--gold) }),
+		     so the kernel seams have to be holes cut out of the cob with evenodd
+		     rather than darker lines drawn over it. Every hole is inset a little
+		     from the outline on purpose: an evenodd subpath that spilled past the
+		     edge would fill instead of cut, and sprout gold nubs off the side. -->
 		<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-			<path d="M12 22a.75.75 0 0 1-.75-.75V9a.75.75 0 0 1 1.5 0v12.25A.75.75 0 0 1 12 22z"/>
-			<path d="M12 9C12 5.5 10 3.2 7.2 2.5 7 5.9 8.8 8.4 12 9z"/>
-			<path d="M12 9c0-3.5 2-5.8 4.8-6.5.2 3.4-1.6 5.9-4.8 6.5z"/>
-			<path d="M12 13.5c0-3-1.8-5-4.3-5.6-.2 3 1.4 5.1 4.3 5.6z"/>
-			<path d="M12 13.5c0-3 1.8-5 4.3-5.6.2 3-1.4 5.1-4.3 5.6z"/>
-			<path d="M12 18c0-2.7-1.6-4.5-3.9-5-.1 2.7 1.3 4.5 3.9 5z"/>
-			<path d="M12 18c0-2.7 1.6-4.5 3.9-5 .1 2.7-1.3 4.5-3.9 5z"/>
+			<path d="M10.9 14.2c-2.1 1.9-3 4.4-2.7 7.3 2-1.7 3-4.2 2.7-7.3z"/>
+			<path d="M13.1 14.2c2.1 1.9 3 4.4 2.7 7.3-2-1.7-3-4.2-2.7-7.3z"/>
+			<path d="M11.6 16.5h.8v5.1a.4.4 0 0 1-.8 0z"/>
+			<path fill-rule="evenodd" d="M12 2.2c2.2 1.7 3.5 4.5 3.5 7.9 0 4.2-1.6 6.9-3.5 6.9s-3.5-2.7-3.5-6.9c0-3.4 1.3-6.2 3.5-7.9z M11.6 4h.8v11.8h-.8z M9.8 6.3h1.6v.9H9.8z M12.6 6.3h1.6v.9h-1.6z M8.9 9.5h2.5v.9H8.9z M12.6 9.5h2.5v.9h-2.5z M9.1 12.7h2.3v.9H9.1z M12.6 12.7h2.3v.9h-2.3z"/>
 		</svg>
 	</div>
 
