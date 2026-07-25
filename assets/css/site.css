@@ -139,12 +139,6 @@ img { max-width: 100%; height: auto; }
   margin-bottom: 1.1em;
 }
 
-/* ---------- Wheat ornament divider ---------- */
-
-.ornament { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 0 auto; padding: 2.6rem 0 0; color: var(--line-strong); }
-.ornament::before, .ornament::after { content: ""; height: 1px; width: min(120px, 20vw); background: var(--line-strong); }
-.ornament svg { width: 26px; height: 26px; color: var(--gold); }
-
 /* ---------- Sections ---------- */
 
 .section { padding: 3rem 0; }
