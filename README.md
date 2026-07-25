@@ -1,54 +1,47 @@
-# Andresen Memorial Scholarships Website
+# Andresen Memorial Scholarships
 
-This is the official website for the Harold A and Marilyn Kay Andresen Memorial Scholarships. The site provides information about available scholarships, the legacy of the Andresen family, and instructions on how to apply.
+The official website **and** self-hosted application system for the Harold A. and Marilyn Kay
+Andresen Charitable Trust. The site presents the scholarships and the Andresen family legacy, and
+lets graduating seniors in Carroll County, Illinois apply online — replacing the old JotForm setup
+starting with the 2027 season.
 
-## 🌟 Features
+## Features
 
-- **Scholarship Information**: Detailed pages for the Andresen Ag Scholarship and the Andresen Memorial Scholarship.
-- **Legacy Section**: Honors the memory of Harold, Kay, Randy, and Rodney Andresen.
-- **Responsive Design**: Fully responsive layout that works on desktop, tablet, and mobile devices.
-- **Online Application Links**: Direct links to scholarship application resources.
+- **Scholarship information** — detail pages for the Andresen Ag and Andresen Memorial scholarships.
+- **Legacy section** — honors the memory of Harold, Kay, Randy, and Rodney Andresen.
+- **Online application** — form with file uploads (transcript, essay) and signature capture.
+- **Confidential teacher recommendation** — submitted through a private tokenized link.
+- **Board dashboard** — password-gated review tools: filtering, scoring, notes, and CSV export.
+- **Responsive design** — works on desktop, tablet, and mobile.
 
-## 🛠️ Technologies Used
+## Technologies
 
-- **HTML5 & CSS3**: Core structure and styling.
-- **Sass**: Syntactically Awesome Style Sheets for modular CSS.
-- **JavaScript & jQuery**: Frontend interactivity and responsive features.
-- **Font Awesome**: Iconography.
-- **Google Fonts**: Custom typography.
+- **HTML5 & CSS3** — a hand-rolled design system in `assets/css/site.css` (no template or framework).
+- **Vanilla JavaScript** — no jQuery.
+- **Cloudflare Pages Functions (TypeScript)** — the backend in `functions/`.
+- **Cloudflare D1** (SQLite) for records, **R2** for uploaded files, **Resend** for email.
+- **Google Fonts** — Fraunces and Public Sans.
 
-## 🚀 Getting Started
+## Getting Started
 
-To view the website locally:
+The static pages can be opened directly in a browser, but the application system needs the
+Cloudflare tooling. See **[SETUP.md](SETUP.md)** for the full walkthrough. In short:
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/dslag/scholarship-website.git
-   ```
-2. Navigate to the project directory.
-3. Open `index.html` in any modern web browser.
+```bash
+npm install
+npm run dev        # http://localhost:8788
+```
 
-## 📂 Project Structure
+## Project Structure
 
-- `index.html`: The home page of the website.
-- `ag-scholarship.html`: Information about the Andresen Ag Scholarship.
-- `scholarship.html`: Information about the Andresen Memorial Scholarship.
-- `assets/`: 
-    - `css/`: Compiled CSS files.
-    - `js/`: JavaScript files for site functionality.
-    - `sass/`: Source Sass files for styling.
-    - `webfonts/`: Font Awesome icons.
-- `images/`: Photographic assets used throughout the site.
+- `index.html`, `ag-scholarship.html`, `scholarship.html` — public info pages.
+- `apply.html`, `recommend.html`, `admin.html` — application form, teacher recommendation, board dashboard.
+- `assets/css/site.css` — the whole design system. `assets/js/` — front-end scripts.
+- `functions/` — Cloudflare Pages Functions (API) and shared library code.
+- `schema.sql`, `migrations/` — D1 database schema.
+- `CLAUDE.md` — context and architecture notes for contributors.
 
-## 📜 Credits
+## License
 
-- Design based on the **Minimaxing** template by [HTML5 UP](https://html5up.net).
-- Icons provided by [Font Awesome](https://fontawesome.com).
-
-## 📄 License
-
-The website design is based on a template by [HTML5 UP](https://html5up.net) and is licensed under the **Creative Commons Attribution 3.0 Unported** license.
-
-All original content, including text and family photographs, is copyright of the **Harold A and Marilyn Kay Andresen Charitable Trust**.
-
-See the [LICENSE.txt](LICENSE.txt) file for full details.
+All content, including text and family photographs, is copyright of the
+**Harold A. and Marilyn Kay Andresen Charitable Trust**. All rights reserved.

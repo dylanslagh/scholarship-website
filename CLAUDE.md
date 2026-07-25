@@ -30,8 +30,10 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
 - `wrangler.toml` — Cloudflare config: D1/R2 bindings + production `[vars]`.
 - Front-end JS: `assets/js/{apply,admin,recommend,signature-pad,site-config,status-toggle}.js`.
 - Styles: `assets/css/site.css` is the whole design system (2026-07 redesign, no jQuery/template
-  deps). `assets/css/{main,app}.css` + `assets/js/{jquery.min,util,main,breakpoints.min,browser.min}.js`
-  are the retired Minimaxing-era files — unreferenced by the redesigned pages, kept for old branches.
+  deps). The Minimaxing-era files (`main.css`/`app.css`, jQuery + template JS, `assets/sass/`,
+  `assets/webfonts/`, `images/pic*.jpg`, `LICENSE.txt`) were **deleted** once the redesign no longer
+  used them — so the CCA 3.0 attribution no longer applies. The `archive/claudes-improvements` branch
+  keeps its own copies. Don't re-add HTML5 UP/Minimaxing credit unless template code comes back.
 - `SETUP.md` — full first-time setup walkthrough.
 
 ## Cloudflare resources (this account)
