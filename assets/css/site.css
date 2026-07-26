@@ -480,6 +480,8 @@ img { max-width: 100%; height: auto; }
 @media (max-width: 760px) {
   body { font-size: 16px; }
   .frame-row { grid-template-columns: 1fr; }
+  /* Stacked on mobile, lead with the family photo instead of splitting the brothers around it */
+  .frame-row .frame:nth-child(2) { order: -1; }
   .card-grid { grid-template-columns: 1fr; }
   .app-form .field.two { flex-direction: column; gap: 0; }
   .site-head .wrap { justify-content: center; text-align: center; }
