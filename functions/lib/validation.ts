@@ -5,14 +5,24 @@ export function isEmail(value: string): boolean {
 }
 
 // Required text fields on the application (must be non-empty).
+// Keep in sync with the `required` attributes in apply.html.
 export const REQUIRED_FIELDS: Record<string, string> = {
   scholarship: "Scholarship selection",
   full_name: "Name",
+  phone: "Phone number",
   email: "Email",
+  address: "Mailing address",
   high_school: "High school",
   college: "College or school accepted at",
   major: "Major area of study",
   parent_names: "Parent/guardian name(s)",
+  // Academic information — all required.
+  gpa: "GPA",
+  act_sat: "ACT/SAT score",
+  class_rank: "Class rank",
+  class_size: "Number of students in class",
+  awards: "Awards/honors",
+  activities: "Clubs/activities",
 };
 
 export interface ValidationResult {

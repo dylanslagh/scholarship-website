@@ -22,9 +22,9 @@ bucket_name = "andresen-scholarship-uploads"
 # Cloudflare dashboard, never committed here.
 [vars]
 APP_BASE_URL = "https://andresen-scholarships.org"
-# Open for preview testing. IMPORTANT: set back to "false" before merging to the
-# production branch for the public launch, until the 2027 season actually opens.
-APPLICATIONS_OPEN = "true"
+# Closed until the 2027 season actually opens. Flip to "true" (and mirror it in
+# assets/js/site-config.js) when the board is ready to accept applications.
+APPLICATIONS_OPEN = "false"
 DEADLINE = "Saturday, March 13, 2027"
 RESEND_FROM = "Andresen Scholarships <scholarships@andresen-scholarships.org>"
 # BOARD_EMAILS is NOT listed here on purpose. It's set as a dashboard *secret*

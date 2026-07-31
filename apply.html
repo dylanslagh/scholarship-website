@@ -53,7 +53,7 @@
 	<!-- Main -->
 	<div class="wrap" style="padding-top:1.6rem;padding-bottom:3rem">
 		<div class="app-form">
-			<p>Complete the form below to apply. All fields marked <span class="req">*</span> are
+			<p id="apply-intro">Complete the form below to apply. All fields marked <span class="req">*</span> are
 				required. You will need to upload your <strong>high school transcript</strong> and
 				your <strong>essay</strong>, and provide your teacher's email so they can submit a
 				confidential recommendation.</p>
@@ -78,11 +78,12 @@
 					<div class="field"><label>Full Name <span class="req">*</span></label>
 						<input type="text" name="full_name" required></div>
 					<div class="field two">
-						<div><label>Phone Number</label><input type="tel" name="phone"></div>
+						<div><label>Phone Number <span class="req">*</span></label>
+							<input type="tel" name="phone" required></div>
 						<div><label>Email <span class="req">*</span></label><input type="email" name="email" required></div>
 					</div>
-					<div class="field"><label>Mailing Address</label>
-						<input type="text" name="address" placeholder="Street, City, State, ZIP"></div>
+					<div class="field"><label>Mailing Address <span class="req">*</span></label>
+						<input type="text" name="address" placeholder="Street, City, State, ZIP" required></div>
 					<div class="field two">
 						<div><label>High School Attending <span class="req">*</span></label>
 							<input type="text" name="high_school" required></div>
@@ -102,17 +103,22 @@
 				<fieldset>
 					<legend>Academic Information</legend>
 					<div class="field two">
-						<div><label>GPA</label><input type="text" name="gpa"></div>
-						<div><label>ACT / SAT Score</label><input type="text" name="act_sat"></div>
+						<div><label>GPA <span class="req">*</span></label><input type="text" name="gpa" required></div>
+						<div><label>ACT / SAT Score <span class="req">*</span></label>
+							<input type="text" name="act_sat" required></div>
 					</div>
 					<div class="field two">
-						<div><label>Class Rank</label><input type="text" name="class_rank"></div>
-						<div><label>Number of Students in Class</label><input type="text" name="class_size"></div>
+						<div><label>Class Rank <span class="req">*</span></label>
+							<input type="text" name="class_rank" required></div>
+						<div><label>Number of Students in Class <span class="req">*</span></label>
+							<input type="text" name="class_size" required></div>
 					</div>
-					<div class="field"><label>Awards / Honors received in High School</label>
-						<textarea name="awards"></textarea></div>
-					<div class="field"><label>Clubs / Activities in the past 4 years</label>
-						<textarea name="activities" placeholder="Agriculture, Church, Community, sports, etc."></textarea></div>
+					<div class="field"><label>Awards / Honors received in High School <span class="req">*</span></label>
+						<textarea name="awards" required></textarea>
+						<div class="hint">Enter "None" if this does not apply to you.</div></div>
+					<div class="field"><label>Clubs / Activities in the past 4 years <span class="req">*</span></label>
+						<textarea name="activities" placeholder="Agriculture, Church, Community, sports, etc." required></textarea>
+						<div class="hint">Enter "None" if this does not apply to you.</div></div>
 					<div class="field"><label>Upload High School Transcript <span class="req">*</span></label>
 						<input type="file" name="transcript" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
 						<div class="hint">PDF, DOCX, JPG, or PNG, up to 10 MB.</div></div>
@@ -190,7 +196,7 @@
 						</div>
 					</div>
 					<div class="field">
-						<label>Parent / Guardian Signature <span class="req">*</span></label>
+						<label>Parent / Guardian Signature <span class="optional">(optional)</span></label>
 						<div class="sig-wrap">
 							<canvas id="parent-sig" class="sig-pad"></canvas>
 							<button type="button" id="clear-parent-sig" class="sig-clear">Clear</button>
@@ -218,6 +224,7 @@
 
 	<!-- Scripts -->
 	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+	<script src="assets/js/site-config.js"></script>
 	<script src="assets/js/signature-pad.js"></script>
 	<script src="assets/js/apply.js"></script>
 

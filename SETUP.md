@@ -91,11 +91,12 @@ can demo the whole flow safely with no email account.
 Your repo is already connected to Cloudflare Pages, so **push the branch**:
 
 ```bash
-git push origin scholarship-app
+git push origin main
 ```
 
-Cloudflare builds a **preview URL** for the branch — share it with the board to review
-before going live. Merge to `main` when approved.
+`main` is the production branch and serves andresen-scholarships.org. To review a change
+before it goes live, push it to any other branch first — Cloudflare builds a **preview URL**
+for it that you can share with the board — then merge to `main` when approved.
 
 In the Pages project **Settings → Functions**, bind:
 - **D1 database** → variable name `DB` → `andresen-scholarships`

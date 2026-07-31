@@ -5,6 +5,19 @@
     var form = document.getElementById("application-form");
     if (!form) return;
 
+    // Applications closed: show the notice instead of a form the server would reject.
+    // Mirrors APPLICATIONS_OPEN in wrangler.toml (the server-side gate).
+    if (window.SiteConfig && SiteConfig.applicationsOpen === false) {
+      var intro = document.getElementById("apply-intro");
+      if (intro) intro.style.display = "none";
+      form.style.display = "none";
+      var closedMsg = document.getElementById("form-message");
+      closedMsg.className = "form-message info";
+      closedMsg.textContent = "The application period is currently closed. " +
+        "Please check back next year for updated application information.";
+      return;
+    }
+
     // Pre-select scholarship from ?scholarship=ag|memorial
     var params = new URLSearchParams(window.location.search);
     var pre = params.get("scholarship");
@@ -47,11 +60,11 @@
       e.preventDefault();
 
       if (applicantPad.isEmpty()) { showMessage("error", "Please provide the applicant signature."); return; }
-      if (parentPad.isEmpty()) { showMessage("error", "Please provide the parent/guardian signature."); return; }
 
       var data = new FormData(form);
       data.set("applicant_signature", applicantPad.getDataURL());
-      data.set("parent_signature", parentPad.getDataURL());
+      // The parent/guardian signature is optional — only send one if it was drawn.
+      if (!parentPad.isEmpty()) data.set("parent_signature", parentPad.getDataURL());
 
       submitBtn.classList.add("disabled");
       submitBtn.textContent = "Submitting…";

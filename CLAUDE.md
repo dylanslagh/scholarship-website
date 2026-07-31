@@ -34,6 +34,13 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   `assets/webfonts/`, `images/pic*.jpg`, `LICENSE.txt`) were **deleted** once the redesign no longer
   used them — so the CCA 3.0 attribution no longer applies. The `archive/claudes-improvements` branch
   keeps its own copies. Don't re-add HTML5 UP/Minimaxing credit unless template code comes back.
+- **Required fields live in two places and must agree:** the `required` attributes in
+  `apply.html` and `REQUIRED_FIELDS` in `functions/lib/validation.ts`. The form is
+  `novalidate` (so the signature-pad checks run first), which makes the **server** the real
+  gate — adding a `required` attribute alone does nothing. Everything is required except
+  Date Accepted, the whole Financial Information section, and the **parent/guardian
+  signature** (deliberately optional; the applicant's signature is required, and
+  `parent_sig_key` is null when it's skipped).
 - `SETUP.md` — full first-time setup walkthrough.
 
 ## Cloudflare resources (this account)
@@ -81,14 +88,17 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
 - **Verified end-to-end on the preview 2026-07-23:** application submit → D1 record + R2
   uploads → all four emails delivered via Resend → teacher recommendation submitted →
   board score/notes saved. The whole season workflow works on real infrastructure.
-- **⚠️ The live site has no backend yet.** `andresen-scholarships.org` still serves the
-  pre-redesign static HTML5 UP site — hitting any `/api/*` path there returns the old
-  homepage, not a function. All of `functions/` lives only on `redesign-2027`. **Merging
-  that branch to `main` is the actual launch step**, and nothing on production works until
-  it happens. (This is also why emailed links to the live site went nowhere during testing.)
-- **Stage 2 (before opening to real students):** merge `redesign-2027` → `main`; Turnstile
-  (real site key in `apply.html`, `TURNSTILE_SECRET` in the dashboard); set
-  `APPLICATIONS_OPEN="false"` in `[vars]` until the 2027 season actually opens.
+- **Merged to `main` 2026-07-31 (the launch step).** The redesign *and* the backend are now
+  the live site — `andresen-scholarships.org` serves the redesigned pages and `/api/*` hits
+  real Pages Functions. Applications ship **closed**: `APPLICATIONS_OPEN="false"` in
+  `[vars]` and `applicationsOpen: false` in `site-config.js`, so the Apply buttons read
+  "Applications Closed", `apply.html` shows the closed notice instead of the form, and
+  `POST /api/apply` returns 403. Flip **both** when the board opens the 2027 season.
+- **⚠️ Still open before real students apply: Turnstile.** `apply.html` still carries the
+  always-pass **test** site key (`1x00000000000000000000AA`) and no `TURNSTILE_SECRET` is
+  set in the dashboard, so bot protection is effectively off. Create the real Turnstile
+  widget, paste its site key into `apply.html`, and set the secret — do this before
+  flipping `APPLICATIONS_OPEN` to `"true"`.
 - The 2026 applications are **not** migrated — the system starts fresh for 2027.
 
 ### Planned: send arbitrary email from the board dashboard

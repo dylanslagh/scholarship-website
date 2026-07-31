@@ -264,6 +264,7 @@ img { max-width: 100%; height: auto; }
 
 .app-form label { display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.35em; color: var(--ink); }
 .app-form .req { color: var(--red); }
+.app-form .optional { font-weight: 400; font-size: 0.85em; color: var(--ink-faint); }
 .hint { font-weight: 400; font-size: 0.85em; color: var(--ink-faint); margin-top: 0.25em; }
 
 .app-form input[type="text"],
@@ -313,6 +314,7 @@ img { max-width: 100%; height: auto; }
 .form-message { padding: 0.9em 1.1em; border-radius: 8px; margin-bottom: 1.25em; display: none; }
 .form-message.error { background: var(--red-wash); color: var(--red); border: 1px solid #e8c3b6; display: block; }
 .form-message.success { background: var(--green-wash); color: var(--green-deep); border: 1px solid #c2d4b8; display: block; }
+.form-message.info { background: var(--gold-wash); color: #6d5417; border: 1px solid var(--line); display: block; }
 
 .word-count { font-size: 0.85em; color: var(--ink-faint); margin-top: 0.25em; }
 

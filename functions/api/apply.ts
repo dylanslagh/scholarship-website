@@ -86,25 +86,28 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (err) return badRequest(`${label}: ${err}`);
   }
 
-  // Required signatures (data URLs from the signature pads).
+  // Signatures (data URLs from the signature pads). The applicant's is required;
+  // the parent/guardian's is optional.
   const applicantSig = decodeDataUrl(String(form.get("applicant_signature") || ""));
   const parentSig = decodeDataUrl(String(form.get("parent_signature") || ""));
   if (!applicantSig) return badRequest("Applicant signature is required.");
-  if (!parentSig) return badRequest("Parent/guardian signature is required.");
 
   const appId = crypto.randomUUID();
 
   // Store files in R2.
-  let transcriptKey: string, essayKey: string, applicantSigKey: string, parentSigKey: string;
+  let transcriptKey: string, essayKey: string, applicantSigKey: string;
+  let parentSigKey: string | null = null;
   try {
     transcriptKey = (await putUpload(env, appId, "transcript", transcript)).key;
     essayKey = (await putUpload(env, appId, "essay", essay)).key;
     applicantSigKey = await putBytes(
       env, `applications/${appId}/applicant-signature.png`, applicantSig.bytes, applicantSig.contentType
     );
-    parentSigKey = await putBytes(
-      env, `applications/${appId}/parent-signature.png`, parentSig.bytes, parentSig.contentType
-    );
+    if (parentSig) {
+      parentSigKey = await putBytes(
+        env, `applications/${appId}/parent-signature.png`, parentSig.bytes, parentSig.contentType
+      );
+    }
   } catch (e) {
     console.error("R2 upload failed", e);
     return json({ ok: false, error: "Upload failed. Please try again." }, 500);
