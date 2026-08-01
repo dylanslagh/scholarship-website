@@ -1,13 +1,14 @@
 import type { Env } from "../lib/env";
-import { applicationsOpen, boardEmails, json, badRequest } from "../lib/env";
+import { applicationsOpen, boardEmails, json, badRequest, seasonStartISO } from "../lib/env";
 import { validateApplicationFields, verifyTurnstile } from "../lib/validation";
 import { putUpload, putBytes, validateFile, decodeDataUrl } from "../lib/storage";
-import { insertApplication, insertRecommendation } from "../lib/db";
+import { findDuplicateApplication, insertApplication, insertRecommendation } from "../lib/db";
 import type { ApplicationRecord } from "../lib/db";
 import {
   emailApplicantConfirmation,
   emailTeacherRequest,
   emailBoardNewApplication,
+  emailDuplicateApplication,
 } from "../lib/email";
 
 export const SCHOLARSHIP_LABELS: Record<string, string> = {
@@ -20,8 +21,6 @@ const TEXT_FIELDS = [
   "scholarship", "full_name", "phone", "email", "address", "high_school",
   "college", "date_accepted", "major", "parent_names",
   "gpa", "class_rank", "class_size", "act_sat", "awards", "activities",
-  "financing_plan", "work_during_school", "other_scholarships", "pct_parents",
-  "parent_income", "num_dependents", "dependent_ages", "parent_occupations",
   "teacher_name", "teacher_email",
 ];
 
@@ -68,29 +67,59 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return badRequest("Bot verification failed. Please try again.");
   }
 
-  // Field validation.
+  // Field validation. `errors` carries a field name per problem so the browser
+  // can highlight and focus the first one; `error` stays for older clients.
   const { ok, errors } = validateApplicationFields(fields);
-  if (!ok) return json({ ok: false, error: errors.join(" ") }, 400);
+  if (!ok) {
+    return json({ ok: false, error: errors.map((e) => e.message).join(" "), errors }, 400);
+  }
+
+  // One application per student, to one scholarship. Checked before the uploads
+  // so a rejected duplicate never leaves orphaned objects in R2.
+  const duplicate = await findDuplicateApplication(
+    env, fields.email, fields.phone, seasonStartISO(env)
+  );
+  if (duplicate) {
+    const existingLabel =
+      SCHOLARSHIP_LABELS[duplicate.existing.scholarship] || "Andresen Scholarship";
+    waitUntil(
+      emailDuplicateApplication(
+        env, fields.email, fields.full_name, duplicate.field,
+        existingLabel, duplicate.existing.created_at
+      ).catch((e) => console.error("Duplicate notice email failed", e))
+    );
+    const what = duplicate.field === "email" ? "email address" : "phone number";
+    return json({
+      ok: false,
+      field: duplicate.field,
+      error: `An application has already been submitted with this ${what}. Each student may ` +
+        `apply once, to one scholarship. We've emailed you the details — your first application ` +
+        `still stands, so there's nothing else you need to do.`,
+    }, 409);
+  }
 
   // Required files: transcript + essay.
   const transcript = asFile(form.get("transcript"));
   const essay = asFile(form.get("essay"));
   if (!transcript || transcript.size === 0) {
-    return badRequest("A high school transcript file is required.");
+    return badRequest("A high school transcript file is required.", "transcript");
   }
   if (!essay || essay.size === 0) {
-    return badRequest("An essay file is required.");
+    return badRequest("An essay file is required.", "essay");
   }
-  for (const [label, file] of [["Transcript", transcript], ["Essay", essay]] as const) {
+  for (const [field, label, file] of [
+    ["transcript", "Transcript", transcript],
+    ["essay", "Essay", essay],
+  ] as const) {
     const err = validateFile(file);
-    if (err) return badRequest(`${label}: ${err}`);
+    if (err) return badRequest(`${label}: ${err}`, field);
   }
 
   // Signatures (data URLs from the signature pads). The applicant's is required;
   // the parent/guardian's is optional.
   const applicantSig = decodeDataUrl(String(form.get("applicant_signature") || ""));
   const parentSig = decodeDataUrl(String(form.get("parent_signature") || ""));
-  if (!applicantSig) return badRequest("Applicant signature is required.");
+  if (!applicantSig) return badRequest("Applicant signature is required.", "applicant_signature");
 
   const appId = crypto.randomUUID();
 
@@ -135,14 +164,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     act_sat: fields.act_sat || null,
     awards: fields.awards || null,
     activities: fields.activities || null,
-    financing_plan: fields.financing_plan || null,
-    work_during_school: fields.work_during_school || null,
-    other_scholarships: fields.other_scholarships || null,
-    pct_parents: fields.pct_parents || null,
-    parent_income: fields.parent_income || null,
-    num_dependents: fields.num_dependents || null,
-    dependent_ages: fields.dependent_ages || null,
-    parent_occupations: fields.parent_occupations || null,
     transcript_key: transcriptKey,
     essay_key: essayKey,
     applicant_sig_key: applicantSigKey,

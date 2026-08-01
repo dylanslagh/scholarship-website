@@ -234,6 +234,7 @@ img { max-width: 100%; height: auto; }
 .site-foot { background: var(--green-deep); color: #e8e4d3; margin-top: 3rem; }
 .site-foot .wrap { padding: 2.4rem 1.4rem 2rem; text-align: center; }
 .site-foot .memorial { font-family: var(--serif); font-size: 1.05rem; font-style: italic; color: #f2eeda; margin-bottom: 0.4em; }
+.site-foot .contact { font-size: 0.92rem; color: #dfe6d4; margin: 0 0 0.6em; }
 .site-foot .fine { font-size: 0.85rem; color: #b9c4ac; margin: 0; }
 .site-foot a { color: #d8e0c8; }
 
@@ -295,7 +296,42 @@ img { max-width: 100%; height: auto; }
 .app-form .radio-row label,
 .app-form .yn-row label { display: inline-flex; align-items: center; font-weight: 400; margin-right: 1.5em; }
 .app-form .radio-row input, .app-form .yn-row input { width: auto; margin-right: 0.5em; accent-color: var(--green); }
-.app-form .radio-row > label:first-child, .app-form .yn-row > label:first-child { display: block; font-weight: 600; margin-bottom: 0.4em; }
+
+/* Groups (radio sets, signatures) use a nested fieldset/legend for a real
+   accessible name — strip the card styling so they still read as one field. */
+.app-form fieldset.subgroup {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin: 0 0 1.15em;
+  min-width: 0;
+}
+.app-form .subgroup > legend {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ink);
+  padding: 0;
+  margin-bottom: 0.4em;
+}
+
+/* Field errors */
+.app-form .field-error {
+  color: var(--red);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0.3em 0 0;
+}
+.app-form .has-error,
+.app-form .has-error:focus { border-color: var(--red); }
+.app-form input.has-error:focus,
+.app-form select.has-error:focus,
+.app-form textarea.has-error:focus { box-shadow: 0 0 0 3px rgba(176, 58, 38, 0.15); }
+.form-message.error-summary p { margin: 0 0 0.4em; font-weight: 600; }
+.form-message.error-summary ul { margin: 0; padding-left: 1.2em; }
+.form-message.error-summary a { color: inherit; }
 
 /* Signature pad */
 .sig-wrap { position: relative; }
@@ -308,7 +344,26 @@ img { max-width: 100%; height: auto; }
   touch-action: none;
   display: block;
 }
+.sig-pad:focus-visible {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(62, 107, 64, 0.15);
+}
 .sig-clear { background: none; border: none; color: var(--green); cursor: pointer; font-size: 0.9em; padding: 0.25em 0; font-family: var(--sans); }
+/* "Or type your full legal name" — the keyboard alternative under each pad. */
+.app-form .sig-wrap + label { margin-top: 0.5em; }
+
+/* Visible only to screen readers. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* Messages */
 .form-message { padding: 0.9em 1.1em; border-radius: 8px; margin-bottom: 1.25em; display: none; }
@@ -317,6 +372,26 @@ img { max-width: 100%; height: auto; }
 .form-message.info { background: var(--gold-wash); color: #6d5417; border: 1px solid var(--line); display: block; }
 
 .word-count { font-size: 0.85em; color: var(--ink-faint); margin-top: 0.25em; }
+
+/* "We brought back what you had filled in" — only shown after a draft restore. */
+.draft-notice {
+  background: var(--gold-wash);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.9em 1.1em;
+  margin-bottom: 1.25em;
+}
+.draft-notice p { margin: 0 0 0.7em; color: #6d5417; font-size: 0.95rem; }
+.draft-notice[hidden] { display: none; }
+
+/* "Apply to one scholarship only" — on the two scholarship pages. */
+.one-only {
+  background: var(--gold-wash);
+  border-left: 3px solid var(--gold);
+  border-radius: 6px;
+  padding: 0.8em 1.1em;
+  margin: 1.4em 0;
+}
 
 .controls { margin: 0; }
 
@@ -433,7 +508,8 @@ img { max-width: 100%; height: auto; }
 
 /* Review panel */
 .review-panel { border-top: 4px solid var(--gold); }
-.review-panel label { display: block; font-weight: 600; font-size: 0.92rem; margin: 0.9em 0 0.3em; }
+.review-panel label,
+.review-panel .field-label { display: block; font-weight: 600; font-size: 0.92rem; margin: 0.9em 0 0.3em; }
 .review-panel select, .review-panel textarea {
   width: 100%;
   padding: 0.55em 0.7em;

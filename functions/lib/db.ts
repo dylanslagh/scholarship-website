@@ -20,14 +20,6 @@ export interface ApplicationRecord {
   act_sat: string | null;
   awards: string | null;
   activities: string | null;
-  financing_plan: string | null;
-  work_during_school: string | null;
-  other_scholarships: string | null;
-  pct_parents: string | null;
-  parent_income: string | null;
-  num_dependents: string | null;
-  dependent_ages: string | null;
-  parent_occupations: string | null;
   transcript_key: string | null;
   essay_key: string | null;
   applicant_sig_key: string | null;
@@ -58,10 +50,58 @@ const APP_COLUMNS = [
   "full_name", "phone", "email", "address", "high_school", "college",
   "date_accepted", "major", "parent_names",
   "gpa", "class_rank", "class_size", "act_sat", "awards", "activities",
-  "financing_plan", "work_during_school", "other_scholarships", "pct_parents",
-  "parent_income", "num_dependents", "dependent_ages", "parent_occupations",
   "transcript_key", "essay_key", "applicant_sig_key", "parent_sig_key",
 ] as const;
+
+// One application per student, to one scholarship. A repeat email address or
+// phone number from the same season is treated as the same applicant.
+export interface DuplicateMatch {
+  field: "email" | "phone";
+  existing: { full_name: string; scholarship: string; created_at: string };
+}
+
+// Compare on digits only, so "(815) 555-0134" and "815-555-0134" are one number.
+// Anything shorter than a real phone number is ignored rather than matched loosely.
+function phoneKey(value: string | null): string {
+  const digits = String(value || "").replace(/\D/g, "");
+  return digits.length >= 10 ? digits.slice(-10) : "";
+}
+
+export async function findDuplicateApplication(
+  env: Env,
+  email: string,
+  phone: string,
+  sinceISO: string
+): Promise<DuplicateMatch | null> {
+  // ~40 applications a season, so scanning them beats clever SQL normalisation.
+  const { results } = await env.DB.prepare(
+    `SELECT full_name, email, phone, scholarship, created_at
+       FROM applications
+      WHERE created_at >= ?
+      ORDER BY created_at`
+  ).bind(sinceISO).all<{
+    full_name: string; email: string; phone: string | null;
+    scholarship: string; created_at: string;
+  }>();
+
+  const wantEmail = email.trim().toLowerCase();
+  const wantPhone = phoneKey(phone);
+
+  for (const row of results || []) {
+    const existing = {
+      full_name: row.full_name,
+      scholarship: row.scholarship,
+      created_at: row.created_at,
+    };
+    if (wantEmail && row.email && row.email.trim().toLowerCase() === wantEmail) {
+      return { field: "email", existing };
+    }
+    if (wantPhone && phoneKey(row.phone) === wantPhone) {
+      return { field: "phone", existing };
+    }
+  }
+  return null;
+}
 
 export async function insertApplication(env: Env, app: ApplicationRecord): Promise<void> {
   const placeholders = APP_COLUMNS.map(() => "?").join(", ");

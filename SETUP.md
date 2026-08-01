@@ -78,6 +78,34 @@ can demo the whole flow safely with no email account.
 4. Set `DEMO_MODE="false"` in `wrangler.toml`.
 5. Add `RESEND_API_KEY` as a **Secret** in the Pages dashboard (see step 7).
 
+## 5b. Receiving mail at the contact address (Cloudflare Email Routing)
+
+Resend only *sends*. The contact address printed on every page and set as `Reply-To`
+on every email — `CONTACT_EMAIL` in `wrangler.toml`, currently
+`scholarships@andresen-scholarships.org` — needs somewhere to land, or replies vanish.
+Cloudflare Email Routing forwards it to a real inbox, free:
+
+1. Cloudflare dashboard → the **andresen-scholarships.org** zone → **Email** → **Email Routing**
+   → **Get started**. Accept the DNS records it offers (three MX + an SPF TXT record).
+2. Under **Destination addresses**, add the inbox that should receive the mail and click the
+   verification link Cloudflare emails to it. Forwarding does not work until it is verified.
+3. Under **Custom addresses**, route `scholarships@` → that destination.
+4. Send a test message to the contact address and confirm it arrives.
+
+Notes:
+
+- **This does not conflict with Resend.** Resend's MX record lives on the
+  `send.andresen-scholarships.org` subdomain, and the root domain has no MX of its own, so
+  Email Routing can take the root without touching outbound mail. Verify before you commit
+  to it: `dig MX andresen-scholarships.org` should be empty beforehand.
+- Email Routing **forwards**, it does not host a mailbox. Replying to a student from the
+  forwarded copy will come *from* the destination inbox, not from `scholarships@`, so the
+  applicant sees the personal address. To reply as the scholarship address, add it as a
+  "Send mail as" identity in Gmail using Resend's SMTP credentials.
+- Changing the address means changing it in three places: `CONTACT_EMAIL` in **both**
+  `[vars]` and `[env.preview.vars]`, the `mailto:` links in the page footers, and the
+  Email Routing rule.
+
 ## 6. Bot protection (Turnstile)
 
 1. In Cloudflare → Turnstile, create a widget for your domain.

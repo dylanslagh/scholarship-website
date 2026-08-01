@@ -22,6 +22,10 @@ bucket_name = "andresen-scholarship-uploads"
 # Cloudflare dashboard, never committed here.
 [vars]
 APP_BASE_URL = "https://andresen-scholarships.org"
+# Public contact address, shown on the site and used as Reply-To on every email
+# we send. Delivered by Cloudflare Email Routing (Email > Routing on this zone),
+# which forwards it to a real inbox — see SETUP.md.
+CONTACT_EMAIL = "scholarships@andresen-scholarships.org"
 # Closed until the 2027 season actually opens. Flip to "true" (and mirror it in
 # assets/js/site-config.js) when the board is ready to accept applications.
 APPLICATIONS_OPEN = "false"
@@ -52,8 +56,10 @@ DEMO_MODE = "false"
 # the page shell still rendered fine — so it looked like a blank dashboard, not an
 # error. If preview breaks right after a wrangler.toml edit, check here first.
 #
-# APP_BASE_URL below is the *branch alias* for redesign-2027. If you test from a
-# differently-named branch, update it or the links will point at the wrong preview.
+# APP_BASE_URL below is preview.andresen-scholarships.org, the custom domain bound
+# to the `preview` branch. It used to name the redesign-2027 branch alias, which no
+# longer builds — links in preview emails pointed at a dead host. If you ever test
+# from a differently-named branch, point this at that branch's alias instead.
 
 [[env.preview.d1_databases]]
 binding = "DB"
@@ -65,8 +71,13 @@ binding = "UPLOADS"
 bucket_name = "andresen-scholarship-uploads"
 
 [env.preview.vars]
-APP_BASE_URL = "https://redesign-2027.scholarship-website.pages.dev"
-APPLICATIONS_OPEN = "true"
+APP_BASE_URL = "https://preview.andresen-scholarships.org"
+CONTACT_EMAIL = "scholarships@andresen-scholarships.org"
+# Closed on preview too, matching production. Preview is publicly reachable and
+# shares production's database, R2 bucket and Resend key, so an open form here is
+# an open form on the internet — and Turnstile is still the always-pass test key.
+# Flip to "true" only while actively testing, and back when you're done.
+APPLICATIONS_OPEN = "false"
 DEADLINE = "Saturday, March 13, 2027"
 RESEND_FROM = "Andresen Scholarships <scholarships@andresen-scholarships.org>"
 DEMO_MODE = "false"

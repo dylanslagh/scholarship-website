@@ -36,11 +36,63 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   keeps its own copies. Don't re-add HTML5 UP/Minimaxing credit unless template code comes back.
 - **Required fields live in two places and must agree:** the `required` attributes in
   `apply.html` and `REQUIRED_FIELDS` in `functions/lib/validation.ts`. The form is
-  `novalidate` (so the signature-pad checks run first), which makes the **server** the real
-  gate — adding a `required` attribute alone does nothing. Everything is required except
-  Date Accepted, the whole Financial Information section, and the **parent/guardian
-  signature** (deliberately optional; the applicant's signature is required, and
-  `parent_sig_key` is null when it's skipped).
+  `novalidate`, but `apply.js` now runs the native constraint API itself before
+  submitting, so a `required` attribute *does* gate the browser — the **server is still
+  the real gate**, and both lists must stay in sync. Everything is required except
+  Date Accepted and the **parent/guardian signature** (deliberately optional; the
+  applicant's signature is required, and `parent_sig_key` is null when it's skipped).
+- **There is no Family Financial Information section** — it was removed for 2027.
+  The board doesn't weigh financial need (in practice every eligible applicant is
+  awarded), so the questions, the D1 columns in `schema.sql`, the admin detail group
+  and the CSV columns all went with it, along with the "Financial need of the student"
+  and "Family Financial Information" lines on the two scholarship pages. The live
+  database **still has the columns** — `migrations/0003_drop_financial_fields.sql`
+  drops them but is deliberately unapplied, because dropping a column can't be undone
+  and nothing breaks while they sit empty. Don't re-add these questions without asking.
+- **Form errors are field-keyed, not one paragraph.** Each control has an `id`, a
+  `label[for]`, and its own `.field-error` paragraph wired through `aria-describedby`.
+  `apply.js` validates client-side, paints every problem inline, summarises them with
+  links in `#form-message`, and focuses the first one. Server rejections carry the same
+  shape: `validateApplicationFields` returns `{field, message}[]`, `apply.ts` sends it as
+  `errors`, and `badRequest(message, field)` tags single-field failures — so the client
+  can highlight the right box. Adding a field means adding its error `<p>` too.
+- **Signatures can be drawn *or* typed.** `signature-pad.js` `setTypedName()` renders a
+  typed legal name into the same canvas, so `getDataURL()` stays the only source of the
+  PNG and nothing downstream (R2 keys, D1 columns, `admin.js`) knows the difference.
+  The typed input is the keyboard/screen-reader path — a canvas can't be drawn on with a
+  keyboard; pressing Enter on a focused pad jumps to it. Don't "simplify" this away.
+- **There is a public contact address.** `CONTACT_EMAIL` (`[vars]` *and* `[env.preview.vars]`)
+  is `scholarships@andresen-scholarships.org`: shown in every page footer, on the apply and
+  recommend forms, and set as `Reply-To` on every applicant/teacher email via
+  `contactEmail(env)`. Inbound mail is delivered by **Cloudflare Email Routing** (root-domain
+  MX), which forwards to a real inbox — Resend's MX is on `send.` so the two don't collide.
+  See `SETUP.md` §5b. Changing the address means `wrangler.toml` (both blocks), the `mailto:`
+  links in the footers, and the routing rule.
+- **One application per student, to one scholarship.** Said on `apply.html`, both scholarship
+  pages and `index.html`, and enforced in `apply.ts`: `findDuplicateApplication` rejects a
+  repeat **email address** or **phone number** with a 409 + `field`, so the browser highlights
+  the offending box, and `emailDuplicateApplication` tells the applicant their first one still
+  stands. Phone comparison is digits-only on the last 10, so formatting doesn't matter. The
+  check is scoped to the current season via `seasonStartISO()` (derived from `DEADLINE`, season
+  opens the previous July) — otherwise a 2027 row would block a 2028 sibling forever. **Known
+  trade-off:** two seniors in one household sharing a phone means the second can't submit; the
+  rejection email invites a reply (routed to the first `BOARD_EMAILS` address) and the fix is to
+  delete the earlier row in D1. Checked *before* the R2 uploads so a rejected duplicate leaves
+  no orphaned files.
+- **The open/closed state comes from the server now.** `GET /api/config` reports
+  `APPLICATIONS_OPEN` for the environment that serves it, and `SiteConfig.load()` in
+  `site-config.js` corrects the page after the static default has painted. That's why
+  the preview site can run an open form while production stays closed — *don't* flip
+  `applicationsOpen` in `site-config.js` on a branch to test, it would ride a merge into
+  production. Keep the static default matching production; change `wrangler.toml`
+  (`[vars]` vs `[env.preview.vars]`) to change behaviour.
+- **The form autosaves a draft to the browser.** `form-draft.js` writes every answer to
+  localStorage (debounced, plus on `pagehide`), restores it on load, and shows the
+  `#draft-notice` banner. It is cleared on a successful submit and on "start over", and
+  expires after 14 days — a school computer shouldn't keep a student's address forever.
+  `clear()` also *stops* autosaving; without that the `pagehide` handler writes the still
+  populated form right back and the draft resurrects. **Files can't be restored** (browsers
+  don't allow it), which is why the banner tells applicants to re-attach them.
 - `SETUP.md` — full first-time setup walkthrough.
 
 ## Cloudflare resources (this account)
@@ -110,7 +162,7 @@ settled if you pick this up:
   `replyTo` — the transport is done, only an admin UI + route is missing.
 - Send **one message per recipient**, not one with everyone in `To` — applicants must not
   see each other's addresses.
-- Set `replyTo` to a real monitored inbox; nobody reads `scholarships@andresen-scholarships.org`.
+- `replyTo` is already handled: use `contactEmail(env)` like the other applicant-facing mail.
 - Log every send to D1. Mid-season the board needs to answer "did we already tell this student?"
 - Resend free tier is 100/day, 3,000/month — irrelevant at ~40 applicants, don't design around it.
 - Put it behind the existing `functions/api/admin/_middleware.ts` auth like every other admin route.

@@ -214,12 +214,6 @@
       ["gpa", "GPA"], ["act_sat", "ACT/SAT"], ["class_rank", "Class Rank"], ["class_size", "Class Size"],
       ["awards", "Awards/Honors"], ["activities", "Clubs/Activities"],
     ]],
-    ["Financial", [
-      ["financing_plan", "Financing Plan"], ["work_during_school", "Will Work During School"],
-      ["other_scholarships", "Other Scholarships"], ["pct_parents", "% Paid by Parents"],
-      ["parent_income", "Parent Income"], ["num_dependents", "# Dependents"],
-      ["dependent_ages", "Dependent Ages"], ["parent_occupations", "Parent Occupation(s)"],
-    ]],
   ];
 
   function loadDetail(id) {
@@ -292,8 +286,9 @@
           return "<option value='" + s + "'" + (a.status === s ? " selected" : "") + ">" + STATUS_LABELS[s] + "</option>";
         }).join("") +
       "</select>" +
-      "<label>Score</label>" +
-      "<div class='score-picker' id='score-picker'>" +
+      // A plain <label> would name nothing here — the score is a row of buttons.
+      "<span class='field-label' id='review-score-label'>Score</span>" +
+      "<div class='score-picker' id='score-picker' role='group' aria-labelledby='review-score-label'>" +
         [1, 2, 3, 4, 5].map(function (n) {
           return "<button type='button' data-score='" + n + "'" +
             (a.score >= n ? " class='on'" : "") + " aria-label='Score " + n + "'>●</button>";
