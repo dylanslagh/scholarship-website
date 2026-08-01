@@ -22,6 +22,10 @@ bucket_name = "andresen-scholarship-uploads"
 # Cloudflare dashboard, never committed here.
 [vars]
 APP_BASE_URL = "https://andresen-scholarships.org"
+# Public contact address, shown on the site and used as Reply-To on every email
+# we send. Delivered by Cloudflare Email Routing (Email > Routing on this zone),
+# which forwards it to a real inbox — see SETUP.md.
+CONTACT_EMAIL = "scholarships@andresen-scholarships.org"
 # Closed until the 2027 season actually opens. Flip to "true" (and mirror it in
 # assets/js/site-config.js) when the board is ready to accept applications.
 APPLICATIONS_OPEN = "false"
@@ -66,6 +70,7 @@ bucket_name = "andresen-scholarship-uploads"
 
 [env.preview.vars]
 APP_BASE_URL = "https://redesign-2027.scholarship-website.pages.dev"
+CONTACT_EMAIL = "scholarships@andresen-scholarships.org"
 APPLICATIONS_OPEN = "true"
 DEADLINE = "Saturday, March 13, 2027"
 RESEND_FROM = "Andresen Scholarships <scholarships@andresen-scholarships.org>"
