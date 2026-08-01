@@ -20,8 +20,6 @@ const TEXT_FIELDS = [
   "scholarship", "full_name", "phone", "email", "address", "high_school",
   "college", "date_accepted", "major", "parent_names",
   "gpa", "class_rank", "class_size", "act_sat", "awards", "activities",
-  "financing_plan", "work_during_school", "other_scholarships", "pct_parents",
-  "parent_income", "num_dependents", "dependent_ages", "parent_occupations",
   "teacher_name", "teacher_email",
 ];
 
@@ -141,14 +139,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     act_sat: fields.act_sat || null,
     awards: fields.awards || null,
     activities: fields.activities || null,
-    financing_plan: fields.financing_plan || null,
-    work_during_school: fields.work_during_school || null,
-    other_scholarships: fields.other_scholarships || null,
-    pct_parents: fields.pct_parents || null,
-    parent_income: fields.parent_income || null,
-    num_dependents: fields.num_dependents || null,
-    dependent_ages: fields.dependent_ages || null,
-    parent_occupations: fields.parent_occupations || null,
     transcript_key: transcriptKey,
     essay_key: essayKey,
     applicant_sig_key: applicantSigKey,

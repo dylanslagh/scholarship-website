@@ -30,16 +30,6 @@ CREATE TABLE IF NOT EXISTS applications (
   awards        TEXT,
   activities    TEXT,
 
-  -- Financial information
-  financing_plan     TEXT,
-  work_during_school TEXT,               -- 'Yes' | 'No'
-  other_scholarships TEXT,               -- 'Yes' | 'No'
-  pct_parents        TEXT,
-  parent_income      TEXT,               -- income bracket
-  num_dependents     TEXT,
-  dependent_ages     TEXT,
-  parent_occupations TEXT,
-
   -- Uploaded file keys (objects live in R2)
   transcript_key    TEXT,
   essay_key         TEXT,
