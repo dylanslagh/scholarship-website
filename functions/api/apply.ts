@@ -1,13 +1,14 @@
 import type { Env } from "../lib/env";
-import { applicationsOpen, boardEmails, json, badRequest } from "../lib/env";
+import { applicationsOpen, boardEmails, json, badRequest, seasonStartISO } from "../lib/env";
 import { validateApplicationFields, verifyTurnstile } from "../lib/validation";
 import { putUpload, putBytes, validateFile, decodeDataUrl } from "../lib/storage";
-import { insertApplication, insertRecommendation } from "../lib/db";
+import { findDuplicateApplication, insertApplication, insertRecommendation } from "../lib/db";
 import type { ApplicationRecord } from "../lib/db";
 import {
   emailApplicantConfirmation,
   emailTeacherRequest,
   emailBoardNewApplication,
+  emailDuplicateApplication,
 } from "../lib/email";
 
 export const SCHOLARSHIP_LABELS: Record<string, string> = {
@@ -71,6 +72,30 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { ok, errors } = validateApplicationFields(fields);
   if (!ok) {
     return json({ ok: false, error: errors.map((e) => e.message).join(" "), errors }, 400);
+  }
+
+  // One application per student, to one scholarship. Checked before the uploads
+  // so a rejected duplicate never leaves orphaned objects in R2.
+  const duplicate = await findDuplicateApplication(
+    env, fields.email, fields.phone, seasonStartISO(env)
+  );
+  if (duplicate) {
+    const existingLabel =
+      SCHOLARSHIP_LABELS[duplicate.existing.scholarship] || "Andresen Scholarship";
+    waitUntil(
+      emailDuplicateApplication(
+        env, fields.email, fields.full_name, duplicate.field,
+        existingLabel, duplicate.existing.created_at
+      ).catch((e) => console.error("Duplicate notice email failed", e))
+    );
+    const what = duplicate.field === "email" ? "email address" : "phone number";
+    return json({
+      ok: false,
+      field: duplicate.field,
+      error: `An application has already been submitted with this ${what}. Each student may ` +
+        `apply once, to one scholarship. We've emailed you the details — your first application ` +
+        `still stands, so there's nothing else you need to do.`,
+    }, 409);
   }
 
   // Required files: transcript + essay.
