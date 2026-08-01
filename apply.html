@@ -56,7 +56,9 @@
 			<p id="apply-intro">Complete the form below to apply. All fields marked <span class="req">*</span> are
 				required. You will need to upload your <strong>high school transcript</strong> and
 				your <strong>essay</strong>, and provide your teacher's email so they can submit a
-				confidential recommendation.</p>
+				confidential recommendation. <strong>Apply to one scholarship only — one application per
+					student.</strong> A second application from the same email address or phone number can't
+				be accepted.</p>
 
 			<div id="form-message" class="form-message" role="alert"></div>
 
@@ -73,11 +75,13 @@
 					<legend>Scholarship</legend>
 					<fieldset class="field radio-row subgroup">
 						<legend>Which scholarship are you applying to? <span class="req">*</span></legend>
+						<p class="hint" id="hint-scholarship" style="margin-top:0">Pick one. You may apply to
+							only one of the two scholarships, and only once.</p>
 						<label for="scholarship-ag"><input type="radio" id="scholarship-ag" name="scholarship"
-								value="ag" aria-describedby="err-scholarship" required> Andresen Ag Scholarship</label>
+								value="ag" aria-describedby="hint-scholarship err-scholarship" required> Andresen Ag Scholarship</label>
 						<label for="scholarship-memorial"><input type="radio" id="scholarship-memorial"
-								name="scholarship" value="memorial" aria-describedby="err-scholarship" required>
-							Andresen Memorial Scholarship</label>
+								name="scholarship" value="memorial" aria-describedby="hint-scholarship err-scholarship"
+								required> Andresen Memorial Scholarship</label>
 						<p class="field-error" id="err-scholarship" hidden></p>
 					</fieldset>
 				</fieldset>

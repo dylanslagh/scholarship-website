@@ -61,6 +61,17 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   PNG and nothing downstream (R2 keys, D1 columns, `admin.js`) knows the difference.
   The typed input is the keyboard/screen-reader path — a canvas can't be drawn on with a
   keyboard; pressing Enter on a focused pad jumps to it. Don't "simplify" this away.
+- **One application per student, to one scholarship.** Said on `apply.html`, both scholarship
+  pages and `index.html`, and enforced in `apply.ts`: `findDuplicateApplication` rejects a
+  repeat **email address** or **phone number** with a 409 + `field`, so the browser highlights
+  the offending box, and `emailDuplicateApplication` tells the applicant their first one still
+  stands. Phone comparison is digits-only on the last 10, so formatting doesn't matter. The
+  check is scoped to the current season via `seasonStartISO()` (derived from `DEADLINE`, season
+  opens the previous July) — otherwise a 2027 row would block a 2028 sibling forever. **Known
+  trade-off:** two seniors in one household sharing a phone means the second can't submit; the
+  rejection email invites a reply (routed to the first `BOARD_EMAILS` address) and the fix is to
+  delete the earlier row in D1. Checked *before* the R2 uploads so a rejected duplicate leaves
+  no orphaned files.
 - **The open/closed state comes from the server now.** `GET /api/config` reports
   `APPLICATIONS_OPEN` for the environment that serves it, and `SiteConfig.load()` in
   `site-config.js` corrects the page after the static default has painted. That's why

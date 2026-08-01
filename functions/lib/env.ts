@@ -32,6 +32,22 @@ export function isDemoMode(env: Env): boolean {
   return String(env.DEMO_MODE).toLowerCase() === "true" || !env.RESEND_API_KEY;
 }
 
+// Start of the current application season, as an ISO timestamp.
+//
+// Used to scope the one-application-per-student check: a student blocked by
+// their own 2027 application must still be able to apply in a later season, and
+// a younger sibling reusing the family phone number in 2028 must not be blocked
+// by a row from 2027. Derived from DEADLINE (e.g. "Saturday, March 13, 2027"),
+// with the season taken to open the previous July.
+export function seasonStartISO(env: Env): string {
+  const year = Number(/(\d{4})/.exec(env.DEADLINE || "")?.[1]);
+  if (!year) {
+    // No parseable deadline — fall back to a rolling year.
+    return new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
+  }
+  return `${year - 1}-07-01T00:00:00.000Z`;
+}
+
 export function boardEmails(env: Env): string[] {
   return (env.BOARD_EMAILS || "")
     .split(",")

@@ -87,6 +87,49 @@ export async function emailTeacherRequest(
   });
 }
 
+// (2b) Tell an applicant their second application can't be accepted.
+// Goes to the address on the *new* submission — that's who is waiting on an
+// answer — and never quotes the earlier applicant's contact details back.
+export async function emailDuplicateApplication(
+  env: Env,
+  to: string,
+  name: string,
+  matchedOn: "email" | "phone",
+  existingScholarshipLabel: string,
+  existingDate: string
+): Promise<void> {
+  const matchText = matchedOn === "email"
+    ? "this email address"
+    : "this phone number";
+  const applied = new Date(existingDate).toLocaleDateString("en-US", {
+    year: "numeric", month: "long", day: "numeric",
+  });
+  // Nobody reads the `from` mailbox, so only invite a reply when there is a real
+  // trustee address to route it to — a blocked sibling needs a way to reach a human.
+  const replyTo = boardEmails(env)[0];
+  const appeal = replyTo
+    ? `<p>If you think this is a mistake — for example, if a brother or sister applied using the
+         same phone number — just reply to this email and we'll sort it out.</p>`
+    : "";
+  await sendEmail(env, {
+    to: [to],
+    replyTo,
+    subject: "You've already applied for an Andresen Scholarship",
+    html: wrap(`
+      <p>Hi ${escapeHtml(name)},</p>
+      <p>We received another application from you, but we weren't able to accept it — an
+         application using <strong>${matchText}</strong> was already submitted on
+         <strong>${escapeHtml(applied)}</strong> for the
+         <strong>${escapeHtml(existingScholarshipLabel)}</strong>.</p>
+      <p>Each student may submit <strong>one application</strong>, to <strong>one</strong> of the two
+         Andresen scholarships. Your original application still stands and is being reviewed — you
+         don't need to do anything else.</p>
+      ${appeal}
+      <p>Best of luck,<br>The Andresen Family</p>
+    `),
+  });
+}
+
 // (3) New-application notification to the board.
 export async function emailBoardNewApplication(
   env: Env, applicantName: string, scholarshipLabel: string, adminLink: string

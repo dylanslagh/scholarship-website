@@ -383,6 +383,15 @@ img { max-width: 100%; height: auto; }
 .draft-notice p { margin: 0 0 0.7em; color: #6d5417; font-size: 0.95rem; }
 .draft-notice[hidden] { display: none; }
 
+/* "Apply to one scholarship only" — on the two scholarship pages. */
+.one-only {
+  background: var(--gold-wash);
+  border-left: 3px solid var(--gold);
+  border-radius: 6px;
+  padding: 0.8em 1.1em;
+  margin: 1.4em 0;
+}
+
 .controls { margin: 0; }
 
 /* ============================================================
