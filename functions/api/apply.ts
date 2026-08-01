@@ -68,29 +68,35 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return badRequest("Bot verification failed. Please try again.");
   }
 
-  // Field validation.
+  // Field validation. `errors` carries a field name per problem so the browser
+  // can highlight and focus the first one; `error` stays for older clients.
   const { ok, errors } = validateApplicationFields(fields);
-  if (!ok) return json({ ok: false, error: errors.join(" ") }, 400);
+  if (!ok) {
+    return json({ ok: false, error: errors.map((e) => e.message).join(" "), errors }, 400);
+  }
 
   // Required files: transcript + essay.
   const transcript = asFile(form.get("transcript"));
   const essay = asFile(form.get("essay"));
   if (!transcript || transcript.size === 0) {
-    return badRequest("A high school transcript file is required.");
+    return badRequest("A high school transcript file is required.", "transcript");
   }
   if (!essay || essay.size === 0) {
-    return badRequest("An essay file is required.");
+    return badRequest("An essay file is required.", "essay");
   }
-  for (const [label, file] of [["Transcript", transcript], ["Essay", essay]] as const) {
+  for (const [field, label, file] of [
+    ["transcript", "Transcript", transcript],
+    ["essay", "Essay", essay],
+  ] as const) {
     const err = validateFile(file);
-    if (err) return badRequest(`${label}: ${err}`);
+    if (err) return badRequest(`${label}: ${err}`, field);
   }
 
   // Signatures (data URLs from the signature pads). The applicant's is required;
   // the parent/guardian's is optional.
   const applicantSig = decodeDataUrl(String(form.get("applicant_signature") || ""));
   const parentSig = decodeDataUrl(String(form.get("parent_signature") || ""));
-  if (!applicantSig) return badRequest("Applicant signature is required.");
+  if (!applicantSig) return badRequest("Applicant signature is required.", "applicant_signature");
 
   const appId = crypto.randomUUID();
 

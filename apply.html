@@ -65,110 +65,164 @@
 				<!-- Scholarship -->
 				<fieldset>
 					<legend>Scholarship</legend>
-					<div class="field radio-row">
-						<label>Which scholarship are you applying to? <span class="req">*</span></label>
-						<label><input type="radio" name="scholarship" value="ag" required> Andresen Ag Scholarship</label>
-						<label><input type="radio" name="scholarship" value="memorial" required> Andresen Memorial Scholarship</label>
-					</div>
+					<fieldset class="field radio-row subgroup">
+						<legend>Which scholarship are you applying to? <span class="req">*</span></legend>
+						<label for="scholarship-ag"><input type="radio" id="scholarship-ag" name="scholarship"
+								value="ag" aria-describedby="err-scholarship" required> Andresen Ag Scholarship</label>
+						<label for="scholarship-memorial"><input type="radio" id="scholarship-memorial"
+								name="scholarship" value="memorial" aria-describedby="err-scholarship" required>
+							Andresen Memorial Scholarship</label>
+						<p class="field-error" id="err-scholarship" hidden></p>
+					</fieldset>
 				</fieldset>
 
 				<!-- General Information -->
 				<fieldset>
 					<legend>General Information</legend>
-					<div class="field"><label>Full Name <span class="req">*</span></label>
-						<input type="text" name="full_name" required></div>
+					<div class="field"><label for="full_name">Full Name <span class="req">*</span></label>
+						<input type="text" id="full_name" name="full_name" autocomplete="name"
+							aria-describedby="err-full_name" required>
+						<p class="field-error" id="err-full_name" hidden></p></div>
 					<div class="field two">
-						<div><label>Phone Number <span class="req">*</span></label>
-							<input type="tel" name="phone" required></div>
-						<div><label>Email <span class="req">*</span></label><input type="email" name="email" required></div>
+						<div><label for="phone">Phone Number <span class="req">*</span></label>
+							<input type="tel" id="phone" name="phone" autocomplete="tel"
+								aria-describedby="err-phone" required>
+							<p class="field-error" id="err-phone" hidden></p></div>
+						<div><label for="email">Email <span class="req">*</span></label>
+							<input type="email" id="email" name="email" autocomplete="email"
+								aria-describedby="err-email" required>
+							<p class="field-error" id="err-email" hidden></p></div>
 					</div>
-					<div class="field"><label>Mailing Address <span class="req">*</span></label>
-						<input type="text" name="address" placeholder="Street, City, State, ZIP" required></div>
+					<div class="field"><label for="address">Mailing Address <span class="req">*</span></label>
+						<input type="text" id="address" name="address" placeholder="Street, City, State, ZIP"
+							autocomplete="street-address" aria-describedby="err-address" required>
+						<p class="field-error" id="err-address" hidden></p></div>
 					<div class="field two">
-						<div><label>High School Attending <span class="req">*</span></label>
-							<input type="text" name="high_school" required></div>
-						<div><label>College / School Accepted At <span class="req">*</span></label>
-							<input type="text" name="college" required></div>
+						<div><label for="high_school">High School Attending <span class="req">*</span></label>
+							<input type="text" id="high_school" name="high_school"
+								aria-describedby="err-high_school" required>
+							<p class="field-error" id="err-high_school" hidden></p></div>
+						<div><label for="college">College / School Accepted At <span class="req">*</span></label>
+							<input type="text" id="college" name="college" aria-describedby="err-college" required>
+							<p class="field-error" id="err-college" hidden></p></div>
 					</div>
 					<div class="field two">
-						<div><label>Date Accepted</label><input type="date" name="date_accepted"></div>
-						<div><label>Major / Area of Study <span class="req">*</span></label>
-							<input type="text" name="major" required></div>
+						<div><label for="date_accepted">Date Accepted</label>
+							<input type="date" id="date_accepted" name="date_accepted"
+								aria-describedby="err-date_accepted">
+							<p class="field-error" id="err-date_accepted" hidden></p></div>
+						<div><label for="major">Major / Area of Study <span class="req">*</span></label>
+							<input type="text" id="major" name="major" aria-describedby="err-major" required>
+							<p class="field-error" id="err-major" hidden></p></div>
 					</div>
-					<div class="field"><label>Parent / Guardian Name(s) <span class="req">*</span></label>
-						<input type="text" name="parent_names" required></div>
+					<div class="field"><label for="parent_names">Parent / Guardian Name(s) <span class="req">*</span></label>
+						<input type="text" id="parent_names" name="parent_names"
+							aria-describedby="err-parent_names" required>
+						<p class="field-error" id="err-parent_names" hidden></p></div>
 				</fieldset>
 
 				<!-- Academic Information -->
 				<fieldset>
 					<legend>Academic Information</legend>
 					<div class="field two">
-						<div><label>GPA <span class="req">*</span></label><input type="text" name="gpa" required></div>
-						<div><label>ACT / SAT Score <span class="req">*</span></label>
-							<input type="text" name="act_sat" required></div>
+						<div><label for="gpa">GPA <span class="req">*</span></label>
+							<input type="text" id="gpa" name="gpa" aria-describedby="err-gpa" required>
+							<p class="field-error" id="err-gpa" hidden></p></div>
+						<div><label for="act_sat">ACT / SAT Score <span class="req">*</span></label>
+							<input type="text" id="act_sat" name="act_sat" aria-describedby="err-act_sat" required>
+							<p class="field-error" id="err-act_sat" hidden></p></div>
 					</div>
 					<div class="field two">
-						<div><label>Class Rank <span class="req">*</span></label>
-							<input type="text" name="class_rank" required></div>
-						<div><label>Number of Students in Class <span class="req">*</span></label>
-							<input type="text" name="class_size" required></div>
+						<div><label for="class_rank">Class Rank <span class="req">*</span></label>
+							<input type="text" id="class_rank" name="class_rank"
+								aria-describedby="err-class_rank" required>
+							<p class="field-error" id="err-class_rank" hidden></p></div>
+						<div><label for="class_size">Number of Students in Class <span class="req">*</span></label>
+							<input type="text" id="class_size" name="class_size"
+								aria-describedby="err-class_size" required>
+							<p class="field-error" id="err-class_size" hidden></p></div>
 					</div>
-					<div class="field"><label>Awards / Honors received in High School <span class="req">*</span></label>
-						<textarea name="awards" required></textarea>
-						<div class="hint">Enter "None" if this does not apply to you.</div></div>
-					<div class="field"><label>Clubs / Activities in the past 4 years <span class="req">*</span></label>
-						<textarea name="activities" placeholder="Agriculture, Church, Community, sports, etc." required></textarea>
-						<div class="hint">Enter "None" if this does not apply to you.</div></div>
-					<div class="field"><label>Upload High School Transcript <span class="req">*</span></label>
-						<input type="file" name="transcript" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
-						<div class="hint">PDF, DOCX, JPG, or PNG, up to 10 MB.</div></div>
+					<div class="field"><label for="awards">Awards / Honors received in High School <span class="req">*</span></label>
+						<textarea id="awards" name="awards" aria-describedby="hint-awards err-awards" required></textarea>
+						<div class="hint" id="hint-awards">Enter "None" if this does not apply to you.</div>
+						<p class="field-error" id="err-awards" hidden></p></div>
+					<div class="field"><label for="activities">Clubs / Activities in the past 4 years <span class="req">*</span></label>
+						<textarea id="activities" name="activities" placeholder="Agriculture, Church, Community, sports, etc."
+							aria-describedby="hint-activities err-activities" required></textarea>
+						<div class="hint" id="hint-activities">Enter "None" if this does not apply to you.</div>
+						<p class="field-error" id="err-activities" hidden></p></div>
+					<div class="field"><label for="transcript">Upload High School Transcript <span class="req">*</span></label>
+						<input type="file" id="transcript" name="transcript" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+							aria-describedby="hint-transcript err-transcript" required>
+						<div class="hint" id="hint-transcript">PDF, DOCX, JPG, or PNG, up to 10 MB.</div>
+						<p class="field-error" id="err-transcript" hidden></p></div>
 				</fieldset>
 
 				<!-- Financial Information -->
 				<fieldset>
 					<legend>Financial Information</legend>
-					<div class="field"><label>How do you plan on financing your education?</label>
-						<textarea name="financing_plan"></textarea></div>
-					<div class="field yn-row"><label>Do you plan to work during the school year?</label>
-						<label><input type="radio" name="work_during_school" value="Yes"> Yes</label>
-						<label><input type="radio" name="work_during_school" value="No"> No</label>
-					</div>
-					<div class="field yn-row"><label>Have you received other scholarships?</label>
-						<label><input type="radio" name="other_scholarships" value="Yes"> Yes</label>
-						<label><input type="radio" name="other_scholarships" value="No"> No</label>
-					</div>
+					<div class="field"><label for="financing_plan">How do you plan on financing your education?</label>
+						<textarea id="financing_plan" name="financing_plan"
+							aria-describedby="err-financing_plan"></textarea>
+						<p class="field-error" id="err-financing_plan" hidden></p></div>
+					<fieldset class="field yn-row subgroup">
+						<legend>Do you plan to work during the school year?</legend>
+						<label for="work_during_school-yes"><input type="radio" id="work_during_school-yes"
+								name="work_during_school" value="Yes"> Yes</label>
+						<label for="work_during_school-no"><input type="radio" id="work_during_school-no"
+								name="work_during_school" value="No"> No</label>
+					</fieldset>
+					<fieldset class="field yn-row subgroup">
+						<legend>Have you received other scholarships?</legend>
+						<label for="other_scholarships-yes"><input type="radio" id="other_scholarships-yes"
+								name="other_scholarships" value="Yes"> Yes</label>
+						<label for="other_scholarships-no"><input type="radio" id="other_scholarships-no"
+								name="other_scholarships" value="No"> No</label>
+					</fieldset>
 					<div class="field two">
-						<div><label>% of your education paid for by your parents</label>
-							<input type="text" name="pct_parents" placeholder="e.g. 25%"></div>
-						<div><label>Parents' average yearly income (combined)</label>
-							<select name="parent_income">
+						<div><label for="pct_parents">% of your education paid for by your parents</label>
+							<input type="text" id="pct_parents" name="pct_parents" placeholder="e.g. 25%"
+								aria-describedby="err-pct_parents">
+							<p class="field-error" id="err-pct_parents" hidden></p></div>
+						<div><label for="parent_income">Parents' average yearly income (combined)</label>
+							<select id="parent_income" name="parent_income" aria-describedby="err-parent_income">
 								<option value="">Select…</option>
 								<option>Under $25,000</option>
 								<option>$25,000 – $50,000</option>
 								<option>$50,000 – $75,000</option>
 								<option>$75,000 – $100,000</option>
 								<option>Over $100,000</option>
-							</select></div>
+							</select>
+							<p class="field-error" id="err-parent_income" hidden></p></div>
 					</div>
 					<div class="field two">
-						<div><label>Number of Dependents (other than self)</label>
-							<input type="text" name="num_dependents"></div>
-						<div><label>Age(s) of Dependents</label><input type="text" name="dependent_ages"></div>
+						<div><label for="num_dependents">Number of Dependents (other than self)</label>
+							<input type="text" id="num_dependents" name="num_dependents"
+								aria-describedby="err-num_dependents">
+							<p class="field-error" id="err-num_dependents" hidden></p></div>
+						<div><label for="dependent_ages">Age(s) of Dependents</label>
+							<input type="text" id="dependent_ages" name="dependent_ages"
+								aria-describedby="err-dependent_ages">
+							<p class="field-error" id="err-dependent_ages" hidden></p></div>
 					</div>
-					<div class="field"><label>Parents' Occupation(s)</label>
-						<input type="text" name="parent_occupations"></div>
+					<div class="field"><label for="parent_occupations">Parents' Occupation(s)</label>
+						<input type="text" id="parent_occupations" name="parent_occupations"
+							aria-describedby="err-parent_occupations">
+						<p class="field-error" id="err-parent_occupations" hidden></p></div>
 				</fieldset>
 
 				<!-- Essay -->
 				<fieldset>
 					<legend>Essay</legend>
 					<div class="field">
-						<label>Upload your essay <span class="req">*</span></label>
-						<p class="hint" style="margin-top:0">In 300 words or less, describe your plans for your
-							education, your long-term and short-term goals, and what difference your education
-							would make to you, your family, and your community.</p>
-						<input type="file" name="essay" accept=".pdf,.doc,.docx" required>
-						<div class="hint">PDF or DOCX, up to 10 MB.</div>
+						<label for="essay">Upload your essay <span class="req">*</span></label>
+						<p class="hint" id="hint-essay-prompt" style="margin-top:0">In 300 words or less, describe
+							your plans for your education, your long-term and short-term goals, and what difference
+							your education would make to you, your family, and your community.</p>
+						<input type="file" id="essay" name="essay" accept=".pdf,.doc,.docx"
+							aria-describedby="hint-essay-prompt hint-essay err-essay" required>
+						<div class="hint" id="hint-essay">PDF or DOCX, up to 10 MB.</div>
+						<p class="field-error" id="err-essay" hidden></p>
 					</div>
 				</fieldset>
 
@@ -178,30 +232,50 @@
 					<p class="hint" style="margin-top:0">We'll email your teacher a private link to submit
 						their recommendation confidentially. You will not see what they write.</p>
 					<div class="field two">
-						<div><label>Teacher's Name <span class="req">*</span></label>
-							<input type="text" name="teacher_name" required></div>
-						<div><label>Teacher's Email <span class="req">*</span></label>
-							<input type="email" name="teacher_email" required></div>
+						<div><label for="teacher_name">Teacher's Name <span class="req">*</span></label>
+							<input type="text" id="teacher_name" name="teacher_name"
+								aria-describedby="err-teacher_name" required>
+							<p class="field-error" id="err-teacher_name" hidden></p></div>
+						<div><label for="teacher_email">Teacher's Email <span class="req">*</span></label>
+							<input type="email" id="teacher_email" name="teacher_email"
+								aria-describedby="err-teacher_email" required>
+							<p class="field-error" id="err-teacher_email" hidden></p></div>
 					</div>
 				</fieldset>
 
 				<!-- Signatures -->
 				<fieldset>
 					<legend>Signatures</legend>
-					<div class="field">
-						<label>Applicant Signature <span class="req">*</span></label>
+					<fieldset class="field subgroup">
+						<legend>Applicant Signature <span class="req">*</span></legend>
+						<p class="hint" id="applicant-sig-help" style="margin-top:0">Draw your signature with a
+							mouse, finger, or stylus — or type your full legal name below to sign instead.</p>
 						<div class="sig-wrap">
-							<canvas id="applicant-sig" class="sig-pad"></canvas>
-							<button type="button" id="clear-applicant-sig" class="sig-clear">Clear</button>
+							<canvas id="applicant-sig" class="sig-pad" tabindex="0" role="img"
+								aria-label="Applicant signature drawing area"
+								aria-describedby="applicant-sig-help"></canvas>
+							<button type="button" id="clear-applicant-sig" class="sig-clear">Clear<span
+									class="sr-only"> applicant signature</span></button>
 						</div>
-					</div>
-					<div class="field">
-						<label>Parent / Guardian Signature <span class="optional">(optional)</span></label>
+						<label for="applicant-sig-typed">Or type your full legal name to sign</label>
+						<input type="text" id="applicant-sig-typed" autocomplete="name"
+							aria-describedby="err-applicant_signature">
+						<p class="field-error" id="err-applicant_signature" hidden></p>
+					</fieldset>
+					<fieldset class="field subgroup">
+						<legend>Parent / Guardian Signature <span class="optional">(optional)</span></legend>
+						<p class="hint" id="parent-sig-help" style="margin-top:0">Draw the signature with a mouse,
+							finger, or stylus — or type the parent or guardian's full legal name below instead.</p>
 						<div class="sig-wrap">
-							<canvas id="parent-sig" class="sig-pad"></canvas>
-							<button type="button" id="clear-parent-sig" class="sig-clear">Clear</button>
+							<canvas id="parent-sig" class="sig-pad" tabindex="0" role="img"
+								aria-label="Parent or guardian signature drawing area"
+								aria-describedby="parent-sig-help"></canvas>
+							<button type="button" id="clear-parent-sig" class="sig-clear">Clear<span
+									class="sr-only"> parent or guardian signature</span></button>
 						</div>
-					</div>
+						<label for="parent-sig-typed">Or type the parent / guardian's full legal name to sign</label>
+						<input type="text" id="parent-sig-typed" autocomplete="off">
+					</fieldset>
 				</fieldset>
 
 				<!-- Bot protection (Turnstile test key; replace in production — see SETUP.md) -->

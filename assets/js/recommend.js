@@ -29,8 +29,41 @@
       })
       .catch(function () { hide(loading); show(invalid); });
 
+    var recText = document.getElementById("rec_text");
+    var recFile = document.getElementById("rec_file");
+    var recTextError = document.getElementById("err-rec_text");
+
+    function setTextError(msg) {
+      recTextError.textContent = msg;
+      recTextError.hidden = false;
+      recText.setAttribute("aria-invalid", "true");
+      recText.classList.add("has-error");
+      recText.focus();
+      recText.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function clearTextError() {
+      recTextError.textContent = "";
+      recTextError.hidden = true;
+      recText.removeAttribute("aria-invalid");
+      recText.classList.remove("has-error");
+    }
+
+    recText.addEventListener("input", clearTextError);
+    recFile.addEventListener("change", clearTextError);
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+
+      // Mirrors the server rule in functions/api/recommendation/[token].ts:
+      // written text, a file, or both — but not neither.
+      if (!recText.value.trim() && recFile.files.length === 0) {
+        message.className = "form-message";
+        setTextError("Write a recommendation here, or attach a letter below.");
+        return;
+      }
+      clearTextError();
+
       var data = new FormData(form);
       submitBtn.classList.add("disabled");
       submitBtn.textContent = "Submitting…";
