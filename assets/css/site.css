@@ -234,6 +234,7 @@ img { max-width: 100%; height: auto; }
 .site-foot { background: var(--green-deep); color: #e8e4d3; margin-top: 3rem; }
 .site-foot .wrap { padding: 2.4rem 1.4rem 2rem; text-align: center; }
 .site-foot .memorial { font-family: var(--serif); font-size: 1.05rem; font-style: italic; color: #f2eeda; margin-bottom: 0.4em; }
+.site-foot .contact { font-size: 0.92rem; color: #dfe6d4; margin: 0 0 0.6em; }
 .site-foot .fine { font-size: 0.85rem; color: #b9c4ac; margin: 0; }
 .site-foot a { color: #d8e0c8; }
 

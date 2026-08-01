@@ -1,5 +1,5 @@
 import type { Env } from "./env";
-import { isDemoMode, boardEmails } from "./env";
+import { isDemoMode, boardEmails, contactEmail } from "./env";
 
 interface SendArgs {
   to: string[];
@@ -15,7 +15,9 @@ export async function sendEmail(env: Env, args: SendArgs): Promise<void> {
 
   if (isDemoMode(env)) {
     console.log(
-      `\n[DEMO EMAIL] to=${recipients.join(", ")}\n  subject: ${args.subject}\n  (set DEMO_MODE=false and RESEND_API_KEY to send for real)\n`
+      `\n[DEMO EMAIL] to=${recipients.join(", ")}\n  subject: ${args.subject}\n` +
+      `  reply-to: ${args.replyTo || "(none)"}\n` +
+      `  (set DEMO_MODE=false and RESEND_API_KEY to send for real)\n`
     );
     return;
   }
@@ -44,6 +46,14 @@ export async function sendEmail(env: Env, args: SendArgs): Promise<void> {
 
 const BRAND = "Andresen Memorial Scholarships";
 
+// Every message that leaves the trust for an applicant or teacher says how to
+// reach a human, and sets Reply-To so hitting reply does the same thing.
+function contactLine(env: Env): string {
+  const address = escapeHtml(contactEmail(env));
+  return `<p style="font-size:13px;color:#8a9199">Questions? Email us at
+    <a href="mailto:${address}">${address}</a>.</p>`;
+}
+
 function wrap(bodyHtml: string): string {
   return `<div style="font-family:Arial,Helvetica,sans-serif;color:#41474e;line-height:1.6;max-width:600px">
     <h2 style="color:#2e3538">${BRAND}</h2>
@@ -59,12 +69,14 @@ export async function emailApplicantConfirmation(
 ): Promise<void> {
   await sendEmail(env, {
     to: [to],
+    replyTo: contactEmail(env),
     subject: "We received your Andresen Scholarship application",
     html: wrap(`
       <p>Hi ${escapeHtml(name)},</p>
       <p>Thank you for applying for the <strong>${escapeHtml(scholarshipLabel)}</strong>. Your application has been received.</p>
       <p>We've emailed <strong>${escapeHtml(teacherName)}</strong> a private link to submit your teacher recommendation. Your application is complete once that recommendation is received — you don't need to do anything further.</p>
       <p>Best of luck,<br>The Andresen Family</p>
+      ${contactLine(env)}
     `),
   });
 }
@@ -75,6 +87,7 @@ export async function emailTeacherRequest(
 ): Promise<void> {
   await sendEmail(env, {
     to: [to],
+    replyTo: contactEmail(env),
     subject: `Recommendation request for ${applicantName}`,
     html: wrap(`
       <p>Dear ${escapeHtml(teacherName)},</p>
@@ -83,6 +96,7 @@ export async function emailTeacherRequest(
       <p><a href="${link}" style="display:inline-block;background:#4f5b66;color:#fff;padding:10px 18px;border-radius:5px;text-decoration:none">Submit your recommendation</a></p>
       <p style="font-size:13px;color:#8a9199">Or paste this link into your browser:<br>${escapeHtml(link)}</p>
       <p>Thank you for supporting this student.<br>The Andresen Family</p>
+      ${contactLine(env)}
     `),
   });
 }
@@ -104,16 +118,9 @@ export async function emailDuplicateApplication(
   const applied = new Date(existingDate).toLocaleDateString("en-US", {
     year: "numeric", month: "long", day: "numeric",
   });
-  // Nobody reads the `from` mailbox, so only invite a reply when there is a real
-  // trustee address to route it to — a blocked sibling needs a way to reach a human.
-  const replyTo = boardEmails(env)[0];
-  const appeal = replyTo
-    ? `<p>If you think this is a mistake — for example, if a brother or sister applied using the
-         same phone number — just reply to this email and we'll sort it out.</p>`
-    : "";
   await sendEmail(env, {
     to: [to],
-    replyTo,
+    replyTo: contactEmail(env),
     subject: "You've already applied for an Andresen Scholarship",
     html: wrap(`
       <p>Hi ${escapeHtml(name)},</p>
@@ -124,8 +131,10 @@ export async function emailDuplicateApplication(
       <p>Each student may submit <strong>one application</strong>, to <strong>one</strong> of the two
          Andresen scholarships. Your original application still stands and is being reviewed — you
          don't need to do anything else.</p>
-      ${appeal}
+      <p>If you think this is a mistake — for example, if a brother or sister applied using the same
+         phone number — just reply to this email and we'll sort it out.</p>
       <p>Best of luck,<br>The Andresen Family</p>
+      ${contactLine(env)}
     `),
   });
 }

@@ -10,6 +10,7 @@ export interface Env {
 
   // Non-secret vars (wrangler.toml [vars])
   APP_BASE_URL: string;
+  CONTACT_EMAIL: string; // public address shown on the site + Reply-To on emails
   APPLICATIONS_OPEN: string; // "true" | "false"
   DEADLINE: string;
   RESEND_FROM: string;
@@ -46,6 +47,13 @@ export function seasonStartISO(env: Env): string {
     return new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
   }
   return `${year - 1}-07-01T00:00:00.000Z`;
+}
+
+// The address applicants and teachers are told to write to. Kept in [vars] so it
+// matches what the pages show; the literal is a last resort if the var is missing,
+// because an email with no way to reply is worse than a hardcoded default.
+export function contactEmail(env: Env): string {
+  return (env.CONTACT_EMAIL || "").trim() || "scholarships@andresen-scholarships.org";
 }
 
 export function boardEmails(env: Env): string[] {

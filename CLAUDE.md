@@ -61,6 +61,13 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   PNG and nothing downstream (R2 keys, D1 columns, `admin.js`) knows the difference.
   The typed input is the keyboard/screen-reader path — a canvas can't be drawn on with a
   keyboard; pressing Enter on a focused pad jumps to it. Don't "simplify" this away.
+- **There is a public contact address.** `CONTACT_EMAIL` (`[vars]` *and* `[env.preview.vars]`)
+  is `scholarships@andresen-scholarships.org`: shown in every page footer, on the apply and
+  recommend forms, and set as `Reply-To` on every applicant/teacher email via
+  `contactEmail(env)`. Inbound mail is delivered by **Cloudflare Email Routing** (root-domain
+  MX), which forwards to a real inbox — Resend's MX is on `send.` so the two don't collide.
+  See `SETUP.md` §5b. Changing the address means `wrangler.toml` (both blocks), the `mailto:`
+  links in the footers, and the routing rule.
 - **One application per student, to one scholarship.** Said on `apply.html`, both scholarship
   pages and `index.html`, and enforced in `apply.ts`: `findDuplicateApplication` rejects a
   repeat **email address** or **phone number** with a 409 + `field`, so the browser highlights
@@ -155,7 +162,7 @@ settled if you pick this up:
   `replyTo` — the transport is done, only an admin UI + route is missing.
 - Send **one message per recipient**, not one with everyone in `To` — applicants must not
   see each other's addresses.
-- Set `replyTo` to a real monitored inbox; nobody reads `scholarships@andresen-scholarships.org`.
+- `replyTo` is already handled: use `contactEmail(env)` like the other applicant-facing mail.
 - Log every send to D1. Mid-season the board needs to answer "did we already tell this student?"
 - Resend free tier is 100/day, 3,000/month — irrelevant at ~40 applicants, don't design around it.
 - Put it behind the existing `functions/api/admin/_middleware.ts` auth like every other admin route.
