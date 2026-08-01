@@ -60,6 +60,12 @@
 
 			<div id="form-message" class="form-message" role="alert"></div>
 
+			<!-- Shown only when a saved draft was put back (see form-draft.js). -->
+			<div id="draft-notice" class="draft-notice" role="status" hidden>
+				<p id="draft-notice-text"></p>
+				<button type="button" id="draft-start-over" class="btn ghost small">Start over with a blank form</button>
+			</div>
+
 			<form id="application-form" novalidate>
 
 				<!-- Scholarship -->
@@ -300,6 +306,7 @@
 	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 	<script src="assets/js/site-config.js"></script>
 	<script src="assets/js/signature-pad.js"></script>
+	<script src="assets/js/form-draft.js"></script>
 	<script src="assets/js/apply.js"></script>
 
 </body>

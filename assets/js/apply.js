@@ -1,21 +1,43 @@
-// Application form: word counters, signature pads, pre-select scholarship,
-// client-side validation with inline errors, and submit via fetch to /api/apply.
+// Application form: word counters, signature pads, draft autosave, pre-select
+// scholarship, client-side validation with inline errors, and submit to /api/apply.
 (function () {
   document.addEventListener("DOMContentLoaded", function () {
     var form = document.getElementById("application-form");
     if (!form) return;
 
+    var pads = null; // set once the pads exist, so showOpenState can re-measure them
+
     // Applications closed: show the notice instead of a form the server would reject.
-    // Mirrors APPLICATIONS_OPEN in wrangler.toml (the server-side gate).
-    if (window.SiteConfig && SiteConfig.applicationsOpen === false) {
+    // The static default in site-config.js paints this immediately; SiteConfig.load()
+    // then corrects it from APPLICATIONS_OPEN for *this* environment, which is how
+    // preview runs open while production stays closed.
+    function showOpenState(open) {
       var intro = document.getElementById("apply-intro");
-      if (intro) intro.style.display = "none";
-      form.style.display = "none";
-      var closedMsg = document.getElementById("form-message");
-      closedMsg.className = "form-message info";
-      closedMsg.textContent = "The application period is currently closed. " +
-        "Please check back next year for updated application information.";
-      return;
+      var notice = document.getElementById("form-message");
+      if (intro) intro.style.display = open ? "" : "none";
+      form.style.display = open ? "" : "none";
+      if (open) {
+        if (notice.classList.contains("info")) {
+          notice.className = "form-message";
+          notice.textContent = "";
+        }
+        // The pads were sized while hidden; a 0x0 canvas ignores every stroke.
+        if (pads) pads.forEach(function (p) { p.resize(); });
+      } else {
+        notice.className = "form-message info";
+        notice.textContent = "The application period is currently closed. " +
+          "Please check back next year for updated application information.";
+        // A restored-draft notice over a hidden form would just be confusing.
+        var draftNotice = document.getElementById("draft-notice");
+        if (draftNotice) draftNotice.hidden = true;
+      }
+    }
+
+    // Wire everything up first — including while closed, so nothing depends on
+    // the config request landing before the applicant touches the form.
+    showOpenState(!window.SiteConfig || SiteConfig.applicationsOpen !== false);
+    if (window.SiteConfig && SiteConfig.load) {
+      SiteConfig.load(function (cfg) { showOpenState(cfg.applicationsOpen); });
     }
 
     // Pre-select scholarship from ?scholarship=ag|memorial
@@ -157,6 +179,62 @@
 
     var applicant = setUpPad("applicant-sig", "applicant-sig-typed", "clear-applicant-sig");
     var parent = setUpPad("parent-sig", "parent-sig-typed", "clear-parent-sig");
+    pads = [applicant.pad, parent.pad];
+
+    // ----- Draft autosave ------------------------------------------------------
+    // Answers are kept in this browser so a refresh doesn't cost the applicant
+    // their work. Files can't be restored — see form-draft.js.
+
+    var draft = window.FormDraft && FormDraft.attach(form, {
+      key: "andresen-apply-draft-v1",
+      skip: ["cf-turnstile-response"],
+      extras: {
+        read: function () {
+          var out = {};
+          [["applicant", applicant], ["parent", parent]].forEach(function (entry) {
+            var name = entry[0], sig = entry[1];
+            if (sig.typed.value.trim()) {
+              // A typed name redraws itself; no need to store the PNG as well.
+              out[name + "Typed"] = sig.typed.value;
+            } else if (!sig.pad.isEmpty()) {
+              out[name + "Sig"] = sig.pad.getDataURL();
+            }
+          });
+          return out;
+        },
+        write: function (data) {
+          var restored = 0;
+          [["applicant", applicant], ["parent", parent]].forEach(function (entry) {
+            var name = entry[0], sig = entry[1];
+            if (data[name + "Typed"]) {
+              sig.typed.value = data[name + "Typed"];
+              sig.pad.setTypedName(sig.typed.value);
+              restored++;
+            } else if (data[name + "Sig"]) {
+              sig.pad.fromDataURL(data[name + "Sig"]);
+              restored++;
+            }
+          });
+          return restored;
+        },
+      },
+      onRestore: function (info) {
+        var notice = document.getElementById("draft-notice");
+        if (!notice) return;
+        document.getElementById("draft-notice-text").textContent =
+          "We brought back what you had already filled in on this device (saved " + info.age +
+          "). Your transcript and essay files are not saved — please attach them again.";
+        notice.hidden = false;
+      },
+    });
+
+    var startOver = document.getElementById("draft-start-over");
+    if (startOver) {
+      startOver.addEventListener("click", function () {
+        if (draft) draft.clear();
+        window.location.replace(window.location.pathname + window.location.search);
+      });
+    }
 
     var message = document.getElementById("form-message");
     var submitBtn = document.getElementById("submit-btn");
@@ -291,6 +369,11 @@
         .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
         .then(function (res) {
           if (res.ok && res.body.ok) {
+            // Submitted — the draft has served its purpose and shouldn't sit in
+            // the browser afterwards, least of all on a shared school computer.
+            if (draft) draft.clear();
+            var draftNotice = document.getElementById("draft-notice");
+            if (draftNotice) draftNotice.hidden = true;
             form.style.display = "none";
             showMessage("success",
               "Thank you! Your application has been submitted. A confirmation email is on its way, and your teacher has been sent a private link to complete your recommendation.");

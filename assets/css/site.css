@@ -372,6 +372,17 @@ img { max-width: 100%; height: auto; }
 
 .word-count { font-size: 0.85em; color: var(--ink-faint); margin-top: 0.25em; }
 
+/* "We brought back what you had filled in" — only shown after a draft restore. */
+.draft-notice {
+  background: var(--gold-wash);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.9em 1.1em;
+  margin-bottom: 1.25em;
+}
+.draft-notice p { margin: 0 0 0.7em; color: #6d5417; font-size: 0.95rem; }
+.draft-notice[hidden] { display: none; }
+
 .controls { margin: 0; }
 
 /* ============================================================
