@@ -39,9 +39,16 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   `novalidate`, but `apply.js` now runs the native constraint API itself before
   submitting, so a `required` attribute *does* gate the browser — the **server is still
   the real gate**, and both lists must stay in sync. Everything is required except
-  Date Accepted, the whole Financial Information section, and the **parent/guardian
-  signature** (deliberately optional; the applicant's signature is required, and
-  `parent_sig_key` is null when it's skipped).
+  Date Accepted and the **parent/guardian signature** (deliberately optional; the
+  applicant's signature is required, and `parent_sig_key` is null when it's skipped).
+- **There is no Family Financial Information section** — it was removed for 2027.
+  The board doesn't weigh financial need (in practice every eligible applicant is
+  awarded), so the questions, the D1 columns in `schema.sql`, the admin detail group
+  and the CSV columns all went with it, along with the "Financial need of the student"
+  and "Family Financial Information" lines on the two scholarship pages. The live
+  database **still has the columns** — `migrations/0003_drop_financial_fields.sql`
+  drops them but is deliberately unapplied, because dropping a column can't be undone
+  and nothing breaks while they sit empty. Don't re-add these questions without asking.
 - **Form errors are field-keyed, not one paragraph.** Each control has an `id`, a
   `label[for]`, and its own `.field-error` paragraph wired through `aria-describedby`.
   `apply.js` validates client-side, paints every problem inline, summarises them with

@@ -20,14 +20,6 @@ export interface ApplicationRecord {
   act_sat: string | null;
   awards: string | null;
   activities: string | null;
-  financing_plan: string | null;
-  work_during_school: string | null;
-  other_scholarships: string | null;
-  pct_parents: string | null;
-  parent_income: string | null;
-  num_dependents: string | null;
-  dependent_ages: string | null;
-  parent_occupations: string | null;
   transcript_key: string | null;
   essay_key: string | null;
   applicant_sig_key: string | null;
@@ -58,8 +50,6 @@ const APP_COLUMNS = [
   "full_name", "phone", "email", "address", "high_school", "college",
   "date_accepted", "major", "parent_names",
   "gpa", "class_rank", "class_size", "act_sat", "awards", "activities",
-  "financing_plan", "work_during_school", "other_scholarships", "pct_parents",
-  "parent_income", "num_dependents", "dependent_ages", "parent_occupations",
   "transcript_key", "essay_key", "applicant_sig_key", "parent_sig_key",
 ] as const;
 

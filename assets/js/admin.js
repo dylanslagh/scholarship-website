@@ -214,12 +214,6 @@
       ["gpa", "GPA"], ["act_sat", "ACT/SAT"], ["class_rank", "Class Rank"], ["class_size", "Class Size"],
       ["awards", "Awards/Honors"], ["activities", "Clubs/Activities"],
     ]],
-    ["Financial", [
-      ["financing_plan", "Financing Plan"], ["work_during_school", "Will Work During School"],
-      ["other_scholarships", "Other Scholarships"], ["pct_parents", "% Paid by Parents"],
-      ["parent_income", "Parent Income"], ["num_dependents", "# Dependents"],
-      ["dependent_ages", "Dependent Ages"], ["parent_occupations", "Parent Occupation(s)"],
-    ]],
   ];
 
   function loadDetail(id) {
