@@ -292,8 +292,9 @@
           return "<option value='" + s + "'" + (a.status === s ? " selected" : "") + ">" + STATUS_LABELS[s] + "</option>";
         }).join("") +
       "</select>" +
-      "<label>Score</label>" +
-      "<div class='score-picker' id='score-picker'>" +
+      // A plain <label> would name nothing here — the score is a row of buttons.
+      "<span class='field-label' id='review-score-label'>Score</span>" +
+      "<div class='score-picker' id='score-picker' role='group' aria-labelledby='review-score-label'>" +
         [1, 2, 3, 4, 5].map(function (n) {
           return "<button type='button' data-score='" + n + "'" +
             (a.score >= n ? " class='on'" : "") + " aria-label='Score " + n + "'>●</button>";

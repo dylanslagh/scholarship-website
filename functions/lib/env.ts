@@ -47,6 +47,8 @@ export function json(data: unknown, status = 200, headers: HeadersInit = {}): Re
   });
 }
 
-export function badRequest(message: string): Response {
-  return json({ ok: false, error: message }, 400);
+// `field` names the form control at fault, when there is one, so the browser can
+// highlight and focus it rather than only printing the message.
+export function badRequest(message: string, field?: string): Response {
+  return json({ ok: false, error: message, ...(field ? { field } : {}) }, 400);
 }

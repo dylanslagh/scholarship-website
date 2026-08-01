@@ -68,13 +68,18 @@
 					<fieldset>
 						<legend>Your Recommendation</legend>
 						<div class="field">
-							<label>Write your recommendation</label>
-							<textarea name="rec_text" placeholder="Share your assessment of this student's character, work ethic, and potential."></textarea>
+							<label for="rec_text">Write your recommendation</label>
+							<textarea id="rec_text" name="rec_text" aria-describedby="err-rec_text"
+								placeholder="Share your assessment of this student's character, work ethic, and potential."></textarea>
+							<p class="field-error" id="err-rec_text" hidden></p>
 						</div>
 						<div class="field">
-							<label>…or upload a recommendation letter</label>
-							<input type="file" name="rec_file" accept=".pdf,.doc,.docx">
-							<div class="hint">PDF or DOCX, up to 10 MB. You may provide written text, a file, or both.</div>
+							<label for="rec_file">…or upload a recommendation letter</label>
+							<input type="file" id="rec_file" name="rec_file" accept=".pdf,.doc,.docx"
+								aria-describedby="hint-rec_file err-rec_file">
+							<div class="hint" id="hint-rec_file">PDF or DOCX, up to 10 MB. You may provide written
+								text, a file, or both.</div>
+							<p class="field-error" id="err-rec_file" hidden></p>
 						</div>
 					</fieldset>
 					<footer class="controls">

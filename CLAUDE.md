@@ -36,11 +36,24 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   keeps its own copies. Don't re-add HTML5 UP/Minimaxing credit unless template code comes back.
 - **Required fields live in two places and must agree:** the `required` attributes in
   `apply.html` and `REQUIRED_FIELDS` in `functions/lib/validation.ts`. The form is
-  `novalidate` (so the signature-pad checks run first), which makes the **server** the real
-  gate — adding a `required` attribute alone does nothing. Everything is required except
+  `novalidate`, but `apply.js` now runs the native constraint API itself before
+  submitting, so a `required` attribute *does* gate the browser — the **server is still
+  the real gate**, and both lists must stay in sync. Everything is required except
   Date Accepted, the whole Financial Information section, and the **parent/guardian
   signature** (deliberately optional; the applicant's signature is required, and
   `parent_sig_key` is null when it's skipped).
+- **Form errors are field-keyed, not one paragraph.** Each control has an `id`, a
+  `label[for]`, and its own `.field-error` paragraph wired through `aria-describedby`.
+  `apply.js` validates client-side, paints every problem inline, summarises them with
+  links in `#form-message`, and focuses the first one. Server rejections carry the same
+  shape: `validateApplicationFields` returns `{field, message}[]`, `apply.ts` sends it as
+  `errors`, and `badRequest(message, field)` tags single-field failures — so the client
+  can highlight the right box. Adding a field means adding its error `<p>` too.
+- **Signatures can be drawn *or* typed.** `signature-pad.js` `setTypedName()` renders a
+  typed legal name into the same canvas, so `getDataURL()` stays the only source of the
+  PNG and nothing downstream (R2 keys, D1 columns, `admin.js`) knows the difference.
+  The typed input is the keyboard/screen-reader path — a canvas can't be drawn on with a
+  keyboard; pressing Enter on a focused pad jumps to it. Don't "simplify" this away.
 - `SETUP.md` — full first-time setup walkthrough.
 
 ## Cloudflare resources (this account)

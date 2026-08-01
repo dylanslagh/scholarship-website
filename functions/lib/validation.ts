@@ -5,7 +5,8 @@ export function isEmail(value: string): boolean {
 }
 
 // Required text fields on the application (must be non-empty).
-// Keep in sync with the `required` attributes in apply.html.
+// Keep in sync with the `required` attributes in apply.html. Declaration order
+// matches the form, so the client can focus the first offending field.
 export const REQUIRED_FIELDS: Record<string, string> = {
   scholarship: "Scholarship selection",
   full_name: "Name",
@@ -23,35 +24,41 @@ export const REQUIRED_FIELDS: Record<string, string> = {
   class_size: "Number of students in class",
   awards: "Awards/honors",
   activities: "Clubs/activities",
+  // Teacher recommendation.
+  teacher_name: "Teacher's name",
+  teacher_email: "Teacher's email",
 };
+
+// A single problem, tied to the form field that caused it so the browser can
+// highlight and focus it instead of printing one long combined paragraph.
+export interface FieldError {
+  field: string;
+  message: string;
+}
 
 export interface ValidationResult {
   ok: boolean;
-  errors: string[];
+  errors: FieldError[];
 }
 
 // Validate the parsed text fields of an application submission.
 export function validateApplicationFields(fields: Record<string, string>): ValidationResult {
-  const errors: string[] = [];
+  const errors: FieldError[] = [];
 
-  for (const [key, label] of Object.entries(REQUIRED_FIELDS)) {
-    if (!fields[key] || !fields[key].trim()) errors.push(`${label} is required.`);
+  for (const [field, label] of Object.entries(REQUIRED_FIELDS)) {
+    if (!fields[field] || !fields[field].trim()) {
+      errors.push({ field, message: `${label} is required.` });
+    }
   }
 
   if (fields.scholarship && !["ag", "memorial"].includes(fields.scholarship)) {
-    errors.push("Scholarship must be Ag or Memorial.");
+    errors.push({ field: "scholarship", message: "Scholarship must be Ag or Memorial." });
   }
   if (fields.email && !isEmail(fields.email)) {
-    errors.push("A valid email address is required.");
+    errors.push({ field: "email", message: "A valid email address is required." });
   }
   if (fields.teacher_email && !isEmail(fields.teacher_email)) {
-    errors.push("A valid teacher email address is required.");
-  }
-  if (!fields.teacher_name || !fields.teacher_name.trim()) {
-    errors.push("Teacher's name is required.");
-  }
-  if (!fields.teacher_email || !fields.teacher_email.trim()) {
-    errors.push("Teacher's email is required.");
+    errors.push({ field: "teacher_email", message: "A valid teacher email address is required." });
   }
 
   return { ok: errors.length === 0, errors };
