@@ -54,6 +54,20 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   PNG and nothing downstream (R2 keys, D1 columns, `admin.js`) knows the difference.
   The typed input is the keyboard/screen-reader path — a canvas can't be drawn on with a
   keyboard; pressing Enter on a focused pad jumps to it. Don't "simplify" this away.
+- **The open/closed state comes from the server now.** `GET /api/config` reports
+  `APPLICATIONS_OPEN` for the environment that serves it, and `SiteConfig.load()` in
+  `site-config.js` corrects the page after the static default has painted. That's why
+  the preview site can run an open form while production stays closed — *don't* flip
+  `applicationsOpen` in `site-config.js` on a branch to test, it would ride a merge into
+  production. Keep the static default matching production; change `wrangler.toml`
+  (`[vars]` vs `[env.preview.vars]`) to change behaviour.
+- **The form autosaves a draft to the browser.** `form-draft.js` writes every answer to
+  localStorage (debounced, plus on `pagehide`), restores it on load, and shows the
+  `#draft-notice` banner. It is cleared on a successful submit and on "start over", and
+  expires after 14 days — a school computer shouldn't keep a student's address forever.
+  `clear()` also *stops* autosaving; without that the `pagehide` handler writes the still
+  populated form right back and the draft resurrects. **Files can't be restored** (browsers
+  don't allow it), which is why the banner tells applicants to re-attach them.
 - `SETUP.md` — full first-time setup walkthrough.
 
 ## Cloudflare resources (this account)

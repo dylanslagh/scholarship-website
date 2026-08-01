@@ -2,7 +2,13 @@
 // Reads SiteConfig and updates apply buttons / notices across the site.
 // (Vanilla JS — the redesigned pages no longer load jQuery.)
 document.addEventListener('DOMContentLoaded', function () {
-	var open = SiteConfig.applicationsOpen;
+	// Paint from the static default first (no flicker on the live site), then
+	// again if the server reports a different state for this environment.
+	render(SiteConfig.applicationsOpen);
+	SiteConfig.load(function (cfg) { render(cfg.applicationsOpen); });
+});
+
+function render(open) {
 	var notice = document.getElementById('application-notice');
 	var buttons = document.querySelectorAll('.apply-button');
 	var sidebarTexts = document.querySelectorAll('.apply-sidebar-text');
@@ -42,4 +48,4 @@ document.addEventListener('DOMContentLoaded', function () {
 			el.textContent = 'The application period has closed. Please check back next year when applications reopen.';
 		}
 	});
-});
+}
