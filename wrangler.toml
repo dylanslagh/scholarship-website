@@ -75,8 +75,9 @@ APP_BASE_URL = "https://preview.andresen-scholarships.org"
 CONTACT_EMAIL = "scholarships@andresen-scholarships.org"
 # Closed on preview too, matching production. Preview is publicly reachable and
 # shares production's database, R2 bucket and Resend key, so an open form here is
-# an open form on the internet — and Turnstile is still the always-pass test key.
-# Flip to "true" only while actively testing, and back when you're done.
+# an open form on the internet. Flip to "true" only while actively testing, and
+# back when you're done — and only once TURNSTILE_SECRET is set for Preview too,
+# or the form is open to bots as well as students.
 APPLICATIONS_OPEN = "false"
 DEADLINE = "Saturday, March 13, 2027"
 RESEND_FROM = "Andresen Scholarships <scholarships@andresen-scholarships.org>"

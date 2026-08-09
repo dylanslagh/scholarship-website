@@ -146,11 +146,11 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   `[vars]` and `applicationsOpen: false` in `site-config.js`, so the Apply buttons read
   "Applications Closed", `apply.html` shows the closed notice instead of the form, and
   `POST /api/apply` returns 403. Flip **both** when the board opens the 2027 season.
-- **⚠️ Still open before real students apply: Turnstile.** `apply.html` still carries the
-  always-pass **test** site key (`1x00000000000000000000AA`) and no `TURNSTILE_SECRET` is
-  set in the dashboard, so bot protection is effectively off. Create the real Turnstile
-  widget, paste its site key into `apply.html`, and set the secret — do this before
-  flipping `APPLICATIONS_OPEN` to `"true"`.
+- **Turnstile: real widget created 2026-08-09, site key in `apply.html`.** Managed mode,
+  hostnames `andresen-scholarships.org`, `www.`, `preview.` and `localhost`. **⚠️ Still
+  open: `TURNSTILE_SECRET`** in the dashboard (Production *and* Preview). Until it's set,
+  `verifyTurnstile()` short-circuits to `true` — the checkbox renders and blocks nobody.
+  Set it before flipping `APPLICATIONS_OPEN` to `"true"`.
 - The 2026 applications are **not** migrated — the system starts fresh for 2027.
 
 ### Planned: send arbitrary email from the board dashboard
