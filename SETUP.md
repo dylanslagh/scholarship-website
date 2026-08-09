@@ -108,11 +108,18 @@ Notes:
 
 ## 6. Bot protection (Turnstile)
 
-1. In Cloudflare → Turnstile, create a widget for your domain.
-2. Put the **site key** into `apply.html` (replace the test key `1x00000000000000000000AA`
-   in the `data-sitekey` attribute).
-3. Add the **secret key** as the `TURNSTILE_SECRET` secret (step 7).
-   Until you do this, bot verification is skipped.
+**Already done** for this project — the widget exists, in **Managed** mode, covering
+`andresen-scholarships.org`, `www.`, `preview.` and `localhost`. Its site key is in
+`apply.html`. Repeat these steps only if you ever rotate the keys or move domains.
+
+1. In Cloudflare → Turnstile, create a widget listing every hostname the form is served
+   from — production, `www`, the preview domain, and `localhost` for `npm.cmd run dev`.
+   A hostname that isn't listed makes the widget refuse to render there.
+2. Put the **site key** into `apply.html` (the `data-sitekey` attribute). It is public by
+   design and belongs in the repo.
+3. Add the **secret key** as the `TURNSTILE_SECRET` secret (step 7), for **both**
+   Production and Preview. Until you do, `verifyTurnstile()` returns true without
+   checking anything — the widget renders, but it gates nothing.
 
 ## 7. Deploy
 

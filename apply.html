@@ -235,8 +235,10 @@
 					</fieldset>
 				</fieldset>
 
-				<!-- Bot protection (Turnstile test key; replace in production — see SETUP.md) -->
-				<div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div>
+				<!-- Bot protection. Real Turnstile site key (public by design — it ships in the
+				     page source). The matching secret is the TURNSTILE_SECRET dashboard secret;
+				     without it, verifyTurnstile() skips the check entirely. See SETUP.md. -->
+				<div class="cf-turnstile" data-sitekey="0x4AAAAAAELI18EAld-9mftK"></div>
 
 				<footer class="controls" style="margin-top:1.5em;text-align:center">
 					<button type="submit" id="submit-btn" class="btn" style="font-size:1.05rem;padding:0.7em 2.2em">Submit Application</button>

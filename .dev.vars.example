@@ -16,5 +16,6 @@ SESSION_SECRET=local-dev-session-secret-change-me
 BOARD_EMAILS=someone@example.com,someone-else@example.com
 
 # Cloudflare Turnstile secret key (bot protection on the public form).
-# Leave blank locally to skip verification; the form uses Turnstile's test key.
+# Leave blank locally to skip verification. The real site key in apply.html lists
+# localhost as an allowed hostname, so the widget still renders while you develop.
 TURNSTILE_SECRET=
