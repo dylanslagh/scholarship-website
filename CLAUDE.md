@@ -146,11 +146,26 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   `[vars]` and `applicationsOpen: false` in `site-config.js`, so the Apply buttons read
   "Applications Closed", `apply.html` shows the closed notice instead of the form, and
   `POST /api/apply` returns 403. Flip **both** when the board opens the 2027 season.
-- **Turnstile: real widget created 2026-08-09, site key in `apply.html`.** Managed mode,
-  hostnames `andresen-scholarships.org`, `www.`, `preview.` and `localhost`. **⚠️ Still
-  open: `TURNSTILE_SECRET`** in the dashboard (Production *and* Preview). Until it's set,
-  `verifyTurnstile()` short-circuits to `true` — the checkbox renders and blocks nobody.
-  Set it before flipping `APPLICATIONS_OPEN` to `"true"`.
+- **Turnstile is configured but has never actually run (2026-08-09).** Real widget in
+  Managed mode; its site key is in `apply.html` and live on production, and
+  `TURNSTILE_SECRET` is set in the dashboard for **both** Production and Preview. The two
+  must stay a matched pair — a token minted by one widget fails `siteverify` against a
+  different widget's secret, and the applicant just sees "Bot verification failed" with no
+  way past it. That was the state for a while when the secret was set before the real site
+  key had merged.
+  **⚠️ Nothing has exercised the check yet.** `apply.ts` returns 403 for a closed season
+  *before* it reaches `verifyTurnstile()`, so no request has ever reached it, and
+  `verifyTurnstile()` also returns `true` outright when the secret is missing. "Configured"
+  here means configuration was verified, not behaviour.
+  **Unconfirmed: the widget's hostname list.** It refused to render on `localhost` with
+  console error **110200** ("domain not allowed"), so at least one host was missing; whether
+  `andresen-scholarships.org`, `www.` and `preview.` are on it has never been checked. An
+  unlisted host renders an empty gap where the checkbox should be and fails silently —
+  the form still submits.
+  **Before opening 2027:** flip preview open, load `preview.andresen-scholarships.org/apply`,
+  confirm the checkbox appears and a submission goes through, then close preview again.
+  Preview writes to the live D1 and R2, so delete the test row afterwards — and note the
+  one-application-per-student rule burns that email and phone for the season until you do.
 - The 2026 applications are **not** migrated — the system starts fresh for 2027.
 
 ### Planned: send arbitrary email from the board dashboard
