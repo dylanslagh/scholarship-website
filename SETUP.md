@@ -141,11 +141,12 @@ same service the site already sends through.
 1. In **Resend → API Keys**, create a *new* key (sending permission is enough) named something
    like `gmail-send-as`. Don't reuse the site's `RESEND_API_KEY`: Resend shows a key only once
    at creation, and a separate key means rotating or revoking one can't break the other.
-2. **On a desktop browser** — this step does not exist in the Gmail mobile apps, and
-   iPhone Safari's "Request Desktop Website" stumbles on the popup in step 4. An iPad is
-   usually fine (iPadOS requests desktop sites by default). Gmail → **Settings** (gear) →
-   **See all settings** → **Accounts and Import** → **Send mail as** →
-   **Add another email address**.
+2. **Not in the Gmail mobile apps** — they can only *use* a send-as identity, never create
+   one. You need the full web interface, which does not require an actual computer:
+   **Request Desktop Website** in iPhone Safari works, popup and all, confirmed start to
+   finish including the step 5 verification code (2026-08-11). An iPad works too (iPadOS
+   requests desktop sites by default). Gmail → **Settings** (gear) → **See all settings** →
+   **Accounts and Import** → **Send mail as** → **Add another email address**.
 3. Name: `Andresen Scholarships`. Address: `scholarships@andresen-scholarships.org`.
    Leave **"Treat as an alias" checked** — it's your own role address, and checked is what
    makes Gmail default the From to `scholarships@` when you reply to mail sent there. That
@@ -172,9 +173,9 @@ Notes:
   the root domain and bounces go to `send.`, exactly as for the site's own mail.
 - **These replies count against the same Resend quota** as the application emails (free tier:
   100/day, 3,000/month). Board correspondence at ~40 applicants doesn't come close.
-- **Only the setup is desktop-bound.** Once the identity exists, the Gmail iOS/Android apps
-  read it from your web settings, so you can pick `scholarships@` in the From line and answer
-  students from a phone.
+- **The constraint is the Gmail app, not the device.** Once the identity exists, the iOS and
+  Android apps read it from your web settings, so you can pick `scholarships@` in the From
+  line and answer students from a phone.
 - Each trustee who answers mail needs this set up in *their* Gmail, with **their own** API
   key. Right now the routing rule forwards to one destination, so in practice that's one
   person — revisit if the board adds more.
