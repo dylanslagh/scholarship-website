@@ -71,10 +71,10 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   **Inbound is confirmed working end to end (2026-08-11)** — a message sent from an unrelated
   address reached the destination inbox, and Email Routing's analytics recorded it as
   received *and* forwarded. Config, for reference: root MX `route{1,2,3}.mx.cloudflare.net`,
-  root SPF `include:_spf.mx.cloudflare.net`, Resend isolated on `send.`, routing rule
-  `scholarships@andresen-scholarships.org → dylanslagh@gmail.com` **Active**, catch-all
+  root SPF `include:_spf.mx.cloudflare.net`, Resend isolated on `send.`, the routing rule
+  for `scholarships@` → the trustee's personal Gmail **Active**, catch-all
   (**Drop**) **Disabled** so an unrouted address bounces instead of vanishing.
-  **⚠️ Never test this address by mailing it from `dylanslagh@gmail.com`.** That test cannot
+  **⚠️ Never test this address by mailing it from the inbox it forwards to.** That test cannot
   succeed no matter how healthy forwarding is, and it cost a full debugging round on
   2026-08-11. The rule forwards to that same Gmail account, so the returning copy arrives
   carrying a `Message-ID` Gmail already has in **Sent**, and Gmail suppresses it as a
