@@ -68,22 +68,21 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   MX), which forwards to a real inbox — Resend's MX is on `send.` so the two don't collide.
   See `SETUP.md` §5b. Changing the address means `wrangler.toml` (both blocks), the `mailto:`
   links in the footers, and the routing rule.
-  **⚠️ Inbound looks correctly configured but has never been *observed* working (2026-08-11).**
-  Everything checkable from outside is right: root MX is `route{1,2,3}.mx.cloudflare.net`,
-  root SPF is `include:_spf.mx.cloudflare.net`, Resend is isolated on `send.`, and outbound
-  Resend mail demonstrably delivers. The dashboard is right too — the routing rule
-  `scholarships@andresen-scholarships.org → dylanslagh@gmail.com` is **Active**, and the
-  catch-all (**Drop**) is **Disabled**.
-  Yet a test message to `scholarships@` never appeared: no inbox copy, no spam, no trash, and
-  **no bounce**. The explanation is almost certainly the test itself, not the plumbing — it
-  was sent *from* `dylanslagh@gmail.com`, the same account the rule forwards to, so the
-  returning copy carried a `Message-ID` Gmail already had in **Sent** and Gmail suppressed it
-  as a duplicate. Gmail discards those at delivery, which is why it left no trace in any
-  folder. **Never test this address from the destination inbox** — that test cannot succeed
-  even when forwarding is perfect.
-  To actually confirm, do either: send from a non-Gmail address and watch for it, or open
-  Email → Email Routing → **Activity Log** and check the disposition of the 2026-08-11 16:54Z
-  message. If it reads "Forwarded", inbound is fine and always was.
+  **Inbound is confirmed working end to end (2026-08-11)** — a message sent from an unrelated
+  address reached the destination inbox, and Email Routing's analytics recorded it as
+  received *and* forwarded. Config, for reference: root MX `route{1,2,3}.mx.cloudflare.net`,
+  root SPF `include:_spf.mx.cloudflare.net`, Resend isolated on `send.`, routing rule
+  `scholarships@andresen-scholarships.org → dylanslagh@gmail.com` **Active**, catch-all
+  (**Drop**) **Disabled** so an unrouted address bounces instead of vanishing.
+  **⚠️ Never test this address by mailing it from `dylanslagh@gmail.com`.** That test cannot
+  succeed no matter how healthy forwarding is, and it cost a full debugging round on
+  2026-08-11. The rule forwards to that same Gmail account, so the returning copy arrives
+  carrying a `Message-ID` Gmail already has in **Sent**, and Gmail suppresses it as a
+  duplicate. It is discarded at delivery, leaving nothing in inbox, spam, *or* trash, and
+  generating no bounce — indistinguishable from mail vanishing in transit. Test from a work
+  address or a phone, and when inbound is in doubt read Email → Email Routing → **Activity
+  Log** first: it reports each message as forwarded, dropped, or rejected, and settles in one
+  glance what DNS and rule inspection can only circle around.
   **No code is involved either way**; nothing in `functions/` touches inbound mail.
 - **One application per student, to one scholarship.** Said on `apply.html`, both scholarship
   pages and `index.html`, and enforced in `apply.ts`: `findDuplicateApplication` rejects a
