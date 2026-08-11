@@ -68,6 +68,22 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   MX), which forwards to a real inbox — Resend's MX is on `send.` so the two don't collide.
   See `SETUP.md` §5b. Changing the address means `wrangler.toml` (both blocks), the `mailto:`
   links in the footers, and the routing rule.
+  **Inbound is confirmed working end to end (2026-08-11)** — a message sent from an unrelated
+  address reached the destination inbox, and Email Routing's analytics recorded it as
+  received *and* forwarded. Config, for reference: root MX `route{1,2,3}.mx.cloudflare.net`,
+  root SPF `include:_spf.mx.cloudflare.net`, Resend isolated on `send.`, the routing rule
+  for `scholarships@` → the trustee's personal Gmail **Active**, catch-all
+  (**Drop**) **Disabled** so an unrouted address bounces instead of vanishing.
+  **⚠️ Never test this address by mailing it from the inbox it forwards to.** That test cannot
+  succeed no matter how healthy forwarding is, and it cost a full debugging round on
+  2026-08-11. The rule forwards to that same Gmail account, so the returning copy arrives
+  carrying a `Message-ID` Gmail already has in **Sent**, and Gmail suppresses it as a
+  duplicate. It is discarded at delivery, leaving nothing in inbox, spam, *or* trash, and
+  generating no bounce — indistinguishable from mail vanishing in transit. Test from a work
+  address or a phone, and when inbound is in doubt read Email → Email Routing → **Activity
+  Log** first: it reports each message as forwarded, dropped, or rejected, and settles in one
+  glance what DNS and rule inspection can only circle around.
+  **No code is involved either way**; nothing in `functions/` touches inbound mail.
 - **One application per student, to one scholarship.** Said on `apply.html`, both scholarship
   pages and `index.html`, and enforced in `apply.ts`: `findDuplicateApplication` rejects a
   repeat **email address** or **phone number** with a 409 + `field`, so the browser highlights
