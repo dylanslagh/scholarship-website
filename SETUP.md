@@ -89,8 +89,14 @@ Cloudflare Email Routing forwards it to a real inbox, free:
    → **Get started**. Accept the DNS records it offers (three MX + an SPF TXT record).
 2. Under **Destination addresses**, add the inbox that should receive the mail and click the
    verification link Cloudflare emails to it. Forwarding does not work until it is verified.
-3. Under **Custom addresses**, route `scholarships@` → that destination.
-4. Send a test message to the contact address and confirm it arrives.
+   The verification email is also the receipt: if it isn't in the destination inbox, the
+   step never happened, no matter what the DNS looks like.
+3. Under **Custom addresses**, route `scholarships@` → that destination, and confirm the
+   rule is **enabled**.
+4. Check the **catch-all** action for the zone while you're there. Its default is **Drop**,
+   which is what makes a missing rule so hard to spot — see the note below.
+5. Test it — but **not** by mailing the address from the destination inbox. See the note
+   below on why that test lies.
 
 Notes:
 
@@ -98,6 +104,21 @@ Notes:
   `send.andresen-scholarships.org` subdomain, and the root domain has no MX of its own, so
   Email Routing can take the root without touching outbound mail. Verify before you commit
   to it: `dig MX andresen-scholarships.org` should be empty beforehand.
+- **⚠️ Correct DNS proves nothing about delivery.** Enabling Email Routing adds the MX and
+  SPF records immediately, at step 1 — before any destination is verified and before any
+  rule exists. So `dig MX` can look perfect while mail to `scholarships@` is going nowhere.
+  With no matching rule and the catch-all on its **Drop** default, Cloudflare *accepts* the
+  message at SMTP time and silently discards it: no delivery, **and no bounce**. The sender
+  sees a normal send and hears nothing back, which reads exactly like the mail vanishing in
+  transit. If a test message neither arrives nor bounces, suspect an incomplete rule before
+  you suspect DNS.
+- **⚠️ Don't test by mailing the address from the destination inbox.** If `scholarships@`
+  forwards to a Gmail account and you send the test *from that same Gmail account*, the
+  forwarded copy comes back carrying the `Message-ID` Gmail already has in **Sent** — and
+  Gmail suppresses it as a duplicate rather than putting it in the inbox. Forwarding can be
+  working perfectly and the test still looks like a total failure. Send the test from an
+  unrelated address (a phone carrier address, a work account, a friend) and confirm it lands
+  in the destination inbox — that's the only test that means anything.
 - Email Routing **forwards**, it does not host a mailbox. Replying to a student from the
   forwarded copy will come *from* the destination inbox, not from `scholarships@`, so the
   applicant sees the personal address. To reply as the scholarship address, add it as a
