@@ -68,20 +68,22 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   MX), which forwards to a real inbox — Resend's MX is on `send.` so the two don't collide.
   See `SETUP.md` §5b. Changing the address means `wrangler.toml` (both blocks), the `mailto:`
   links in the footers, and the routing rule.
-  **⚠️ Inbound has never actually been observed working (2026-08-11).** A test message to
-  `scholarships@` neither arrived nor bounced. DNS is *correct* — root MX is
-  `route{1,2,3}.mx.cloudflare.net`, root SPF is `include:_spf.mx.cloudflare.net`, Resend is
-  isolated on `send.` — and outbound Resend mail demonstrably delivers. But those MX records
-  appear as soon as Email Routing is enabled, before any destination is verified or any rule
-  exists, so they say nothing about delivery. No Email Routing **destination-verification
-  email** has ever reached `dylanslagh@gmail.com`, though other `notify.cloudflare.com` mail
-  (invoices, login codes) arrives there fine — so the destination was most likely never
-  verified and the zone's catch-all, which defaults to **Drop**, is silently eating the mail.
-  Two things still to check in the dashboard, since neither is visible from outside: whether
-  a verified destination + enabled `scholarships@` rule exist, and whether the destination is
-  some *other* inbox (Pam's), in which case the mail arrived and just wasn't where we looked.
-  Note the retest trap too: mailing the address *from* the destination Gmail is not a valid
-  test — Gmail drops the returning copy as a `Message-ID` duplicate of the one in Sent.
+  **⚠️ Inbound looks correctly configured but has never been *observed* working (2026-08-11).**
+  Everything checkable from outside is right: root MX is `route{1,2,3}.mx.cloudflare.net`,
+  root SPF is `include:_spf.mx.cloudflare.net`, Resend is isolated on `send.`, and outbound
+  Resend mail demonstrably delivers. The dashboard is right too — the routing rule
+  `scholarships@andresen-scholarships.org → dylanslagh@gmail.com` is **Active**, and the
+  catch-all (**Drop**) is **Disabled**.
+  Yet a test message to `scholarships@` never appeared: no inbox copy, no spam, no trash, and
+  **no bounce**. The explanation is almost certainly the test itself, not the plumbing — it
+  was sent *from* `dylanslagh@gmail.com`, the same account the rule forwards to, so the
+  returning copy carried a `Message-ID` Gmail already had in **Sent** and Gmail suppressed it
+  as a duplicate. Gmail discards those at delivery, which is why it left no trace in any
+  folder. **Never test this address from the destination inbox** — that test cannot succeed
+  even when forwarding is perfect.
+  To actually confirm, do either: send from a non-Gmail address and watch for it, or open
+  Email → Email Routing → **Activity Log** and check the disposition of the 2026-08-11 16:54Z
+  message. If it reads "Forwarded", inbound is fine and always was.
   **No code is involved either way**; nothing in `functions/` touches inbound mail.
 - **One application per student, to one scholarship.** Said on `apply.html`, both scholarship
   pages and `index.html`, and enforced in `apply.ts`: `findDuplicateApplication` rejects a

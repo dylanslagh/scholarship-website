@@ -104,21 +104,26 @@ Notes:
   `send.andresen-scholarships.org` subdomain, and the root domain has no MX of its own, so
   Email Routing can take the root without touching outbound mail. Verify before you commit
   to it: `dig MX andresen-scholarships.org` should be empty beforehand.
-- **⚠️ Correct DNS proves nothing about delivery.** Enabling Email Routing adds the MX and
-  SPF records immediately, at step 1 — before any destination is verified and before any
-  rule exists. So `dig MX` can look perfect while mail to `scholarships@` is going nowhere.
-  With no matching rule and the catch-all on its **Drop** default, Cloudflare *accepts* the
-  message at SMTP time and silently discards it: no delivery, **and no bounce**. The sender
-  sees a normal send and hears nothing back, which reads exactly like the mail vanishing in
-  transit. If a test message neither arrives nor bounces, suspect an incomplete rule before
-  you suspect DNS.
-- **⚠️ Don't test by mailing the address from the destination inbox.** If `scholarships@`
-  forwards to a Gmail account and you send the test *from that same Gmail account*, the
-  forwarded copy comes back carrying the `Message-ID` Gmail already has in **Sent** — and
-  Gmail suppresses it as a duplicate rather than putting it in the inbox. Forwarding can be
+- **⚠️ Don't test by mailing the address from the destination inbox.** This is the one that
+  has actually bitten this project (2026-08-11). If `scholarships@` forwards to a Gmail
+  account and you send the test *from that same Gmail account*, the forwarded copy comes back
+  carrying the `Message-ID` Gmail already has in **Sent** — and Gmail suppresses it as a
+  duplicate instead of delivering it. It is discarded at delivery, so it appears in no
+  folder: not inbox, not spam, not trash, and no bounce is generated. Forwarding can be
   working perfectly and the test still looks like a total failure. Send the test from an
   unrelated address (a phone carrier address, a work account, a friend) and confirm it lands
   in the destination inbox — that's the only test that means anything.
+- **Correct DNS proves nothing about delivery.** Enabling Email Routing adds the MX and SPF
+  records immediately, at step 1 — before any destination is verified and before any rule
+  exists. So `dig MX` can look perfect while mail to `scholarships@` goes nowhere. If a
+  message neither arrives nor bounces, the disposition is in **Email Routing → Activity Log**,
+  which logs every inbound message as forwarded, dropped, or rejected. Check that before
+  theorising about DNS — it answers the question directly.
+- **A disabled catch-all bounces; an enabled one on Drop hides.** With the catch-all
+  **Disabled**, mail to an unrouted address is rejected and the sender gets a bounce. Left
+  **enabled on its `Drop` default**, Cloudflare accepts the message and silently discards it —
+  no delivery and no bounce, which reads exactly like mail vanishing in transit. Disabled is
+  the friendlier setting: a bounce tells you something is wrong.
 - Email Routing **forwards**, it does not host a mailbox. Replying to a student from the
   forwarded copy will come *from* the destination inbox, not from `scholarships@`, so the
   applicant sees the personal address. To reply as the scholarship address, add it as a
