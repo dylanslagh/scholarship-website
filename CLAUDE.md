@@ -115,6 +115,14 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
 - Pages project **`scholarship-website`** → live at **andresen-scholarships.org**.
 - D1 database **`andresen-scholarships`** (id in `wrangler.toml`).
 - R2 bucket **`andresen-scholarship-uploads`**.
+- **No DMARC record, deliberately (decided 2026-08-15).** Cloudflare's DNS Recommendations
+  panel nags about this; leave it alone. Dylan's call: at ~40 applicants a year nobody is
+  going to impersonate the trust, and the parts that actually protect outbound mail are
+  already right — Resend's DKIM key is at `resend._domainkey.andresen-scholarships.org`
+  (**root** domain, so it aligns exactly with a `scholarships@andresen-scholarships.org`
+  From) and `send.` carries `v=spf1 include:amazonses.com ~all`. DMARC at `p=none` would
+  add nothing but XML reports. Revisit only if the trust starts sending bulk mail from a
+  new service. Don't re-propose it unprompted.
 - **`www` redirects to the apex (added 2026-08-15).** It used to be NXDOMAIN — anyone
   typing `www.andresen-scholarships.org` got a browser error, which Cloudflare's own DNS
   Recommendations panel flagged. Two dashboard pieces, neither in this repo: a **proxied
