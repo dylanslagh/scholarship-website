@@ -115,6 +115,17 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
 - Pages project **`scholarship-website`** → live at **andresen-scholarships.org**.
 - D1 database **`andresen-scholarships`** (id in `wrangler.toml`).
 - R2 bucket **`andresen-scholarship-uploads`**.
+- **`www` redirects to the apex (added 2026-08-15).** It used to be NXDOMAIN — anyone
+  typing `www.andresen-scholarships.org` got a browser error, which Cloudflare's own DNS
+  Recommendations panel flagged. Two dashboard pieces, neither in this repo: a **proxied
+  CNAME `www` → `andresen-scholarships.org`**, plus a Redirect Rule from Cloudflare's
+  *"Redirect from WWW to root"* template (`https://www.*` → `https://${1}`, **301**).
+  **"Preserve query string" is deliberately checked** — the template ships it off, and
+  without it a `recommend.html?token=…` link reached via `www` would lose the token and
+  strand the teacher on a broken page. Verified: `www` root and `www` + path + query both
+  301 to the apex with the query intact. `_redirects` can't do this — Cloudflare Pages
+  explicitly does not support domain-level redirects there, and a root
+  `functions/_middleware.ts` would put a Worker in front of every static asset.
 
 ## Config model (important)
 - `wrangler.toml [vars]` = **production** defaults (committed, non-secret).
@@ -162,33 +173,32 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   `[vars]` and `applicationsOpen: false` in `site-config.js`, so the Apply buttons read
   "Applications Closed", `apply.html` shows the closed notice instead of the form, and
   `POST /api/apply` returns 403. Flip **both** when the board opens the 2027 season.
-- **Turnstile is configured but has never actually run (2026-08-09).** Real widget in
-  Managed mode; its site key is in `apply.html` and live on production, and
-  `TURNSTILE_SECRET` is set in the dashboard for **both** Production and Preview. The two
-  must stay a matched pair — a token minted by one widget fails `siteverify` against a
-  different widget's secret, and the applicant just sees "Bot verification failed" with no
-  way past it. That was the state for a while when the secret was set before the real site
-  key had merged.
-  **⚠️ Nothing has exercised the check yet.** `apply.ts` returns 403 for a closed season
-  *before* it reaches `verifyTurnstile()`, so no request has ever reached it, and
-  `verifyTurnstile()` also returns `true` outright when the secret is missing. "Configured"
-  here means configuration was verified, not behaviour.
-  **Hostname list: confirmed good (2026-08-15).** Site key `0x4AAAAAAELI18EAld-9mftK` was
-  rendered directly on both live hosts — a widget injected into the running page via the
-  browser tools, which tests the hostname list without needing the form open. It issued a
-  token on **`andresen-scholarships.org`** *and* **`preview.andresen-scholarships.org`**,
-  with no error callback and no 110200. The earlier 110200 was `localhost` only, which is
-  simply not on the list (and doesn't matter — `verifyTurnstile()` skips when the secret is
-  absent, so local dev never needs the widget). **`www.` is moot: it doesn't exist** —
-  `www.andresen-scholarships.org` is NXDOMAIN, so the apex is the only public host.
-  Re-run the check the same way if the site key ever changes: injecting the widget with
-  `turnstile.render()` and watching for an `error-callback` code is a ~30-second test.
-  **Still unverified: the site-key/secret pairing.** The client half works; nothing has ever
-  called `siteverify`, and only a real submission can, since `apply.ts` 403s first.
-  **Before opening 2027:** flip preview open, load `preview.andresen-scholarships.org/apply`,
-  confirm the checkbox appears and a submission goes through, then close preview again.
-  Preview writes to the live D1 and R2, so delete the test row afterwards — and note the
-  one-application-per-student rule burns that email and phone for the season until you do.
+- **Turnstile works — verified end to end 2026-08-15.** Real widget in Managed mode; site
+  key `0x4AAAAAAELI18EAld-9mftK` is in `apply.html`, and `TURNSTILE_SECRET` is set in the
+  dashboard for **both** Production and Preview. The two must stay a matched pair — a token
+  minted by one widget fails `siteverify` against a different widget's secret, and the
+  applicant just sees "Bot verification failed" with no way past it. Both halves have now
+  actually run, where before this was configuration inspection only:
+  - **Hostname list — good.** The widget issues a token on `andresen-scholarships.org`
+    *and* `preview.andresen-scholarships.org`, and renders on the real `/apply` form (green
+    "Success!" above Submit). The old **110200** was `localhost` only, which is simply not
+    on the list and doesn't need to be — `verifyTurnstile()` returns `true` when the secret
+    is absent, so local dev never needs the widget.
+  - **Site key / secret pair — matched.** Preview was opened briefly and `POST /api/apply`
+    called twice: a bogus token got `Bot verification failed` (proving the secret is set
+    and `siteverify` really runs — this code path had never executed before), and a real
+    token from the page's own widget was **accepted**, falling through to field validation.
+  **Re-testing is cheap, so do it if the key or secret ever changes.** Turnstile is checked
+  in `apply.ts` *before* field validation and before any write, so a POST carrying only
+  `cf-turnstile-response` separates the two outcomes — "Bot verification failed" vs. a list
+  of required-field errors — while writing nothing to D1 or R2 and sending no email. That's
+  why the 2026-08-15 test needed no cleanup and burned no email/phone against the
+  one-application rule. Mint a real token by reading `[name="cf-turnstile-response"]` off a
+  loaded `/apply` page; it's single-use and expires in ~5 minutes.
+  **The season must be open for any of this** — `apply.ts` 403s first. Flip
+  `[env.preview.vars] APPLICATIONS_OPEN` and flip it back after. ⚠️ **`preview.andresen-
+  scholarships.org` is bound to a branch literally named `preview`** (see `APP_BASE_URL`
+  above) — pushing any other branch will not change what that host serves.
 - The 2026 applications are **not** migrated — the system starts fresh for 2027.
 
 ### Planned: send arbitrary email from the board dashboard
