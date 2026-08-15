@@ -78,10 +78,7 @@ CONTACT_EMAIL = "scholarships@andresen-scholarships.org"
 # an open form on the internet. Flip to "true" only while actively testing, and
 # back when you're done — and only once TURNSTILE_SECRET is set for Preview too,
 # or the form is open to bots as well as students.
-# TEMPORARILY OPEN 2026-08-15 to exercise the Turnstile check, which had never
-# run because apply.ts 403s on a closed season before reaching verifyTurnstile().
-# Set back to "false" as soon as the test is done.
-APPLICATIONS_OPEN = "true"
+APPLICATIONS_OPEN = "false"
 DEADLINE = "Saturday, March 13, 2027"
 RESEND_FROM = "Andresen Scholarships <scholarships@andresen-scholarships.org>"
 DEMO_MODE = "false"
