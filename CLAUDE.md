@@ -173,11 +173,18 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   *before* it reaches `verifyTurnstile()`, so no request has ever reached it, and
   `verifyTurnstile()` also returns `true` outright when the secret is missing. "Configured"
   here means configuration was verified, not behaviour.
-  **Unconfirmed: the widget's hostname list.** It refused to render on `localhost` with
-  console error **110200** ("domain not allowed"), so at least one host was missing; whether
-  `andresen-scholarships.org`, `www.` and `preview.` are on it has never been checked. An
-  unlisted host renders an empty gap where the checkbox should be and fails silently —
-  the form still submits.
+  **Hostname list: confirmed good (2026-08-15).** Site key `0x4AAAAAAELI18EAld-9mftK` was
+  rendered directly on both live hosts — a widget injected into the running page via the
+  browser tools, which tests the hostname list without needing the form open. It issued a
+  token on **`andresen-scholarships.org`** *and* **`preview.andresen-scholarships.org`**,
+  with no error callback and no 110200. The earlier 110200 was `localhost` only, which is
+  simply not on the list (and doesn't matter — `verifyTurnstile()` skips when the secret is
+  absent, so local dev never needs the widget). **`www.` is moot: it doesn't exist** —
+  `www.andresen-scholarships.org` is NXDOMAIN, so the apex is the only public host.
+  Re-run the check the same way if the site key ever changes: injecting the widget with
+  `turnstile.render()` and watching for an `error-callback` code is a ~30-second test.
+  **Still unverified: the site-key/secret pairing.** The client half works; nothing has ever
+  called `siteverify`, and only a real submission can, since `apply.ts` 403s first.
   **Before opening 2027:** flip preview open, load `preview.andresen-scholarships.org/apply`,
   confirm the checkbox appears and a submission goes through, then close preview again.
   Preview writes to the live D1 and R2, so delete the test row afterwards — and note the
