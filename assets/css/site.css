@@ -63,6 +63,48 @@ img { max-width: 100%; height: auto; }
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 1.4rem; }
 .wrap.narrow { max-width: 820px; }
 
+/* ---------- Keyboard access ---------- */
+
+/* Lets a keyboard or screen-reader user jump the nav instead of tabbing
+   through it on every page. Off-screen until it takes focus, which is the
+   whole trick: it must not be display:none, or nothing can focus it. */
+.skip-link {
+  position: absolute;
+  top: -3em;
+  left: 0;
+  z-index: 1000;
+  padding: 0.6em 1.1em;
+  background: var(--green-deep);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  text-decoration: none;
+  border-radius: 0 0 var(--radius) 0;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus { top: 0; }
+
+/* The target takes focus programmatically, so it needs tabindex="-1" in the
+   markup -- without it the page scrolls but focus stays in the header and the
+   next Tab goes back to the nav. It should not draw a ring of its own. */
+[tabindex="-1"]:focus { outline: none; }
+
+/* focus-visible rather than focus, so this shows for keyboard users without
+   ringing every mouse click. */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--green-deep);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link { transition: none; }
+}
+
 /* ---------- Header ---------- */
 
 .site-head {
