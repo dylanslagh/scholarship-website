@@ -102,6 +102,14 @@
 							<option value="shared_phone">Shared phone number</option>
 						</optgroup>
 					</select>
+					<!-- Phones get cards instead of the table, so no headers to tap for sorting. -->
+					<select id="sort-mobile" class="mobile-only" aria-label="Sort applications">
+						<option value="created_at:-1">Newest first</option>
+						<option value="created_at:1">Oldest first</option>
+						<option value="full_name:1">Name A–Z</option>
+						<option value="gpa:-1">Highest GPA</option>
+						<option value="score:-1">Highest score</option>
+					</select>
 					<span class="spacer"></span>
 					<a href="/api/admin/export" class="btn ghost small" download>Export CSV</a>
 					<a href="/api/admin/export?type=checks" class="btn ghost small" download>Export Checks</a>
@@ -136,6 +144,10 @@
 						<p>After awarding, open the application and use <em>Record a check</em> under
 							<strong>Scholarship Check</strong>. Press <em>Update</em> when it's handed out and again when it
 							shows up on the bank statement. Every date is optional. Leave one blank rather than guess.</p>
+						<p>Once a check is marked <em>Handed out</em>, <em>Send cash-the-check reminder</em> emails the
+							student asking them to cash or deposit it within two weeks, and tells them to reply if it was
+							lost. Nothing is sent automatically, and each reminder is listed on the check so you can see
+							when the last one went out.</p>
 						<p>If a student loses a check, set it to <em>Reported lost</em>. That doesn't stop payment, so call
 							the bank. Then use <em>Record replacement check</em>. Once the bank confirms the stop payment,
 							set the old check to <em>Voided</em>. Only the newest check counts toward the money still out,

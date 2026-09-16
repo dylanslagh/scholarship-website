@@ -28,6 +28,7 @@
     board_new_application: "New-application alert to board",
     board_recommendation_received: "Recommendation alert to board",
     applicant_recommendation_received: "Recommendation-received notice to student",
+    check_reminder: "Cash-the-check reminder to student",
   };
 
   // "Sent" is what the email service told us. It can't see whether the message
@@ -106,6 +107,11 @@
         else { state.sortKey = key; state.sortDir = key === "created_at" ? -1 : 1; }
         renderList();
       });
+    });
+    document.getElementById("sort-mobile").addEventListener("change", function (e) {
+      var parts = e.target.value.split(":");
+      state.sortKey = parts[0]; state.sortDir = parseInt(parts[1], 10);
+      renderList();
     });
 
     // Probe auth state by attempting to load the list.
@@ -814,7 +820,11 @@
           dtdd("Note", c.note) +
         "</dl>" +
         (replacedBy[c.id] ? "<p class='subtle'>Replaced — not counted toward what's outstanding.</p>" : "") +
+        (c.status === "handed_out" && !replacedBy[c.id] ? reminderInfo(data) : "") +
         "<div class='button-row no-print'>" +
+          (c.status === "handed_out" && !replacedBy[c.id]
+            ? "<button type='button' class='btn small remind-check' data-id='" + esc(c.id) + "'>Send cash-the-check reminder</button>"
+            : "") +
           "<button type='button' class='btn ghost small edit-check' data-id='" + esc(c.id) + "'>Update</button>" +
           (isCurrent && (c.status === "lost" || c.status === "void")
             ? "<button type='button' class='btn small replace-check' data-id='" + esc(c.id) + "'>Record replacement check</button>"
@@ -831,6 +841,20 @@
       "<p class='save-note saved' id='check-note' role='status'></p>" +
     "</div>";
     return html;
+  }
+
+  // Who a reminder goes to, and when earlier ones went out, so nobody sends a
+  // second one without knowing about the first.
+  function reminderInfo(data) {
+    var sent = (data.emails || []).filter(function (e) { return e.kind === "check_reminder"; });
+    return "<div class='reminder-info no-print'><span class='subtle'>A reminder goes to " +
+      esc(data.application.email) + ".</span>" +
+      (sent.length
+        ? "<ul class='history-list compact'>" + sent.map(function (e) {
+            return "<li>Reminder " + fmtDate(e.created_at) + " " + outcomeBadge(e) + "</li>";
+          }).join("") + "</ul>"
+        : "<div class='subtle'>No reminder sent yet.</div>") +
+    "</div>";
   }
 
   function checkName(c) {
@@ -854,6 +878,28 @@
     document.querySelectorAll(".replace-check").forEach(function (btn) {
       btn.addEventListener("click", function () {
         openCheckForm(data, "check-form-new", null, byId[btn.getAttribute("data-id")]);
+      });
+    });
+    document.querySelectorAll(".remind-check").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var c = byId[btn.getAttribute("data-id")];
+        var a = data.application;
+        if (!window.confirm("Email " + a.full_name + " at " + a.email + " a reminder to cash " +
+          (c.check_number ? "check #" + c.check_number : "their check") + "?")) return;
+        busy(btn, "Sending…");
+        send("POST", "/api/admin/checks/" + encodeURIComponent(c.id) + "/reminder", {}).then(function (res) {
+          var message = res.ok
+            ? (res.body.outcome === "logged" ? "Test mode: the reminder was logged, not sent." : "Reminder sent to " + res.body.recipient + ".")
+            : res.body && res.body.recent_at
+              ? "A reminder already went out at " + new Date(res.body.recent_at).toLocaleTimeString() + "."
+              : res.error || "Could not send the reminder.";
+          // Reload either way: a failure is recorded in the email history too.
+          reloadDetail(function () {
+            var note = document.getElementById("check-note");
+            note.className = res.ok ? "save-note saved" : "save-note";
+            note.textContent = message;
+          });
+        });
       });
     });
   }

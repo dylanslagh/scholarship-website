@@ -658,6 +658,8 @@ summary:focus-visible {
 .check-grid dt { color: var(--ink-faint); font-weight: 600; }
 .check-grid dd { margin: 0; white-space: pre-wrap; }
 .check-card .button-row { margin-top: 0.6rem; }
+.reminder-info { margin-top: 0.6rem; font-size: 0.88rem; }
+.reminder-info .history-list { margin-top: 0.2rem; }
 
 .board-guide {
   background: var(--card);
@@ -697,6 +699,59 @@ summary:focus-visible {
   .detail-grid { grid-template-columns: 1fr; gap: 0 0; }
   .detail-grid dt { margin-top: 0.6em; }
   .edit-grid { grid-template-columns: 1fr; }
+
+  /* iPhone Safari zooms into any focused control whose text is under 16px, and
+     stays zoomed, so the dashboard's page scrolls sideways after typing in a box. */
+  .admin-body input, .admin-body select, .admin-body textarea { font-size: 16px; }
+
+  /* Board dashboard stats: a compact two-column list so the applications are
+     on the first screen, not below seven big tiles. */
+  .stat-row { grid-template-columns: 1fr 1fr; gap: 0.45rem; margin-bottom: 1rem; }
+  .stat { display: flex; align-items: baseline; gap: 0.45rem; padding: 0.4rem 0.7rem; border-radius: 8px; }
+  .stat .num { font-size: 1.2rem; }
+  .stat .lbl { font-size: 0.66rem; letter-spacing: 0.04em; line-height: 1.25; }
+
+  /* Board dashboard list: one card per application instead of a wide table. */
+  .toolbar select, .toolbar .mobile-only { flex: 1 1 45%; min-width: 0; }
+  /* The CSV downloads are for a spreadsheet on a computer; on a phone they only
+     push the list further down. */
+  .toolbar .spacer, .toolbar .btn { display: none; }
+  .table-card { background: none; border: none; box-shadow: none; overflow: visible; }
+  .admin-table, .admin-table tbody { display: block; min-width: 0; }
+  .admin-table thead { display: none; }
+  .admin-table tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.6rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.7rem;
+  }
+  .admin-table tbody tr:hover td { background: none; }
+  .admin-table td { display: block; padding: 0; border: none; font-size: 0.9rem; }
+  /* Name and score on top; school; scholarship · GPA · date; then the badges. */
+  .admin-table td:nth-child(1) { order: 1; flex: 1 1 60%; min-width: 0; overflow-wrap: anywhere; }
+  .admin-table td:nth-child(8) { order: 2; }
+  .admin-table td:nth-child(2) { order: 3; flex-basis: 100%; }
+  .admin-table td:nth-child(2) .subtle { display: inline; }
+  .admin-table td:nth-child(2) .subtle:not(:empty)::before { content: " · "; }
+  .admin-table td:nth-child(3) { order: 4; }
+  .admin-table td:nth-child(4) { order: 5; }
+  .admin-table td:nth-child(4)::before { content: "GPA "; color: var(--ink-faint); }
+  .admin-table td:nth-child(5) { order: 6; color: var(--ink-faint); }
+  .admin-table tbody tr::after { content: ""; order: 7; flex-basis: 100%; }
+  .admin-table td:nth-child(6) { order: 8; }
+  .admin-table td:nth-child(7) { order: 9; }
+  .admin-table td:nth-child(7) .ck-line { display: inline; margin: 0 0 0 0.4rem; }
+  .list-foot { font-size: 0.85rem; }
+}
+
+@media (min-width: 761px) {
+  .mobile-only { display: none !important; }
 }
 
 /* ============================================================

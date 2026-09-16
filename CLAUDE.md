@@ -39,6 +39,12 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   `assets/webfonts/`, `images/pic*.jpg`, `LICENSE.txt`) were **deleted** once the redesign no longer
   used them — so the CCA 3.0 attribution no longer applies. The `archive/claudes-improvements` branch
   keeps its own copies. Don't re-add HTML5 UP/Minimaxing credit unless template code comes back.
+  **Dashboard on phones (≤760px):** the application table turns into one card per row (pure CSS
+  `order` on the table cells, so `renderList()` stays one code path), stats shrink to a compact
+  two-column list, a `#sort-mobile` select replaces the header sorting, and the CSV export
+  buttons hide. Every dashboard `input`/`select`/`textarea` is **16px** there on purpose:
+  iPhone Safari zooms into a focused control under 16px and stays zoomed, which reads as the
+  page scrolling sideways. Don't shrink them back.
 - **Required fields live in two places and must agree:** the `required` attributes in
   `apply.html` and `REQUIRED_FIELDS` in `functions/lib/validation.ts`. The form is
   `novalidate`, but `apply.js` now runs the native constraint API itself before
@@ -133,6 +139,11 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
     anyway, two checks cashed, and two unlinked checks. A status is a note — nothing contacts
     a bank. `checks/[id]` PATCH logs to `change_log`; DELETE is for entry mistakes only and is
     refused for a check that something replaces. `export?type=checks` is the reconciliation CSV.
+    `checks/[id]/reminder` emails the student a "please cash within two weeks" reminder
+    (`emailCheckReminder`) — only for a `handed_out` check that nothing replaces, only when a
+    trustee presses the button, with the same 2-minute double-click guard. The "two weeks"
+    wording came from Dylan's parents' idea for the paperwork handed out with checks; it's a
+    request in the email, not a rule the site enforces.
   The board-facing how-to is the collapsible guide at the top of the list in `admin.html`.
 - **Preview shares the production D1 and R2** (`[env.preview.*]` bindings point at the same
   database and bucket). A separate preview database was considered on 2026-09-16 and Dylan
