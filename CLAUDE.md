@@ -20,13 +20,18 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   recommendation, opened via a tokenized link), `admin.html` (password-gated board dashboard).
   Info pages: `index.html`, `ag-scholarship.html`, `scholarship.html`. Also `404.html`, `favicon.svg`.
 - Backend: `functions/api/*` — `apply.ts`, `recommendation/[token].ts`, `admin/*`
-  (login, applications, application/[id] incl. PATCH for board review, file/[[key]], export = CSV);
+  (login, applications, application/[id] incl. PATCH for board review, file/[[key]],
+  export = CSV, plus the board-operations routes below);
   `functions/api/admin/_middleware.ts` gates admin routes. Shared code in `functions/lib/*`
-  (env, db, storage, auth, email, validation).
-- `schema.sql` — D1 tables (`applications`, `recommendations`). `migrations/0002_board_review.sql`
-  adds `score` + `board_notes`. **Applied to both local and remote D1.** Gotcha: `db:migrate:remote`
+  (env, db, storage, auth, email, validation, checks).
+- `schema.sql` — D1 tables. `migrations/0002_board_review.sql` adds `score` + `board_notes`
+  (**applied to local and remote**). `migrations/0004_operations.sql` adds `email_log`,
+  `change_log`, `checks` and `applications.phone_reviewed_at` (**applied to local and remote
+2026-09-16**, statement by statement). Gotcha: `db:migrate:remote`
   (`wrangler d1 execute --remote --file=…`) can fail with a Cloudflare **import API** error; running
-  each `ALTER` as a separate `wrangler d1 execute --remote --command "…"` uses the query API and works.
+  each statement as a separate `wrangler d1 execute --remote --command "…"` uses the query API and works.
+- `OPERATIONS-HANDOFF-2026-09-16.md` — the brief (from a ChatGPT review session) that the
+  board-operations features were built from. Historical; this file describes what was built.
 - `wrangler.toml` — Cloudflare config: D1/R2 bindings + production `[vars]`.
 - Front-end JS: `assets/js/{apply,admin,recommend,signature-pad,site-config,status-toggle}.js`.
 - Styles: `assets/css/site.css` is the whole design system (2026-07 redesign, no jQuery/template
@@ -85,16 +90,55 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   glance what DNS and rule inspection can only circle around.
   **No code is involved either way**; nothing in `functions/` touches inbound mail.
 - **One application per student, to one scholarship.** Said on `apply.html`, both scholarship
-  pages and `index.html`, and enforced in `apply.ts`: `findDuplicateApplication` rejects a
-  repeat **email address** or **phone number** with a 409 + `field`, so the browser highlights
-  the offending box, and `emailDuplicateApplication` tells the applicant their first one still
-  stands. Phone comparison is digits-only on the last 10, so formatting doesn't matter. The
-  check is scoped to the current season via `seasonStartISO()` (derived from `DEADLINE`, season
-  opens the previous July) — otherwise a 2027 row would block a 2028 sibling forever. **Known
-  trade-off:** two seniors in one household sharing a phone means the second can't submit; the
-  rejection email invites a reply (routed to the first `BOARD_EMAILS` address) and the fix is to
-  delete the earlier row in D1. Checked *before* the R2 uploads so a rejected duplicate leaves
-  no orphaned files.
+  pages and `index.html`, and enforced in `apply.ts`: `findApplicationByEmail` rejects a
+  repeat **email address** (case-insensitive) with a 409 + `field`, so the browser highlights
+  the box, and `emailDuplicateApplication` tells the applicant their first one still stands.
+  Scoped to the current season via `seasonStartISO()` (derived from `DEADLINE`, season opens
+  the previous July). Checked *before* the R2 uploads so a rejected duplicate leaves no
+  orphaned files.
+  **A shared phone number is no longer refused (changed 2026-09-16, Dylan approved).** It used
+  to be, which meant two seniors in one household couldn't both apply. Now both are accepted
+  and the dashboard flags the pair ("Shared phone" badge, a filter, and a warning on the
+  detail page) until the board presses *They're different students*, which stamps
+  `phone_reviewed_at` on every application in the group. A later third match re-raises the
+  flag for all of them; correcting a phone number clears that application's stamp. Phone
+  comparison is digits-only on the last 10, grouped by season (`seasonOf()`, July–June).
+  A true repeat under a new email is resolved by the board: keep the first, mark the later
+  one Not awarded with a note — nothing is deleted.
+- **Board operations (built 2026-09-16 from the handoff brief).** Three features on the
+  dashboard, all behind the admin middleware:
+  - **Email history.** `sendEmail()` records *every* attempt in `email_log` (kind, recipients,
+    outcome, Resend message id, error) and never throws — callers read the returned outcome.
+    `accepted` means Resend took it, **not** that it arrived; the UI says "Sent" with that
+    caveat. `apply.ts` sends the teacher request *first*, so the applicant confirmation and
+    board alert can say truthfully whether it went out.
+  - **Recommendation follow-up.** `application/[id]/resend-request` re-sends the teacher link.
+    Duplicate clicks are stopped by `reserveEmailSend()` — a single `INSERT … WHERE NOT EXISTS`
+    that claims a 2-minute window; failed sends don't count, so a retry is never blocked.
+    `application/[id]/teacher` corrects name/email and **saves only**; a changed email gets a
+    fresh token so the old link dies. Refused once the recommendation is submitted.
+    `markRecommendationSubmitted` is conditional on `status = 'pending'`, so a double post
+    records once, and only the winner emails the applicant
+    (`emailApplicantRecommendationReceived` — teacher's name only, never the text or link).
+  - **Corrections.** `application/[id]/details` edits contact/college fields only
+    (`EDITABLE_APPLICATION_FIELDS`; academic answers are deliberately not editable). Saves
+    only, never emails. Every save goes to `change_log` as before/after JSON; the detail view
+    derives "originally submitted as" from the oldest `before`. Changing an email to one
+    another application this season uses is refused.
+  - **Checks.** `checks` rows, entered by hand; `lib/checks.ts` `summarizeChecks()` is the one
+    place the rules live. The *current* check is the one no other check replaces; only it
+    counts toward the outstanding amount, so a replacement is never a second award.
+    States: needs_check / outstanding / follow_up / cleared. Follow-up covers lost or voided
+    with no replacement, a replaced check not yet voided, a replaced check that was cashed
+    anyway, two checks cashed, and two unlinked checks. A status is a note — nothing contacts
+    a bank. `checks/[id]` PATCH logs to `change_log`; DELETE is for entry mistakes only and is
+    refused for a check that something replaces. `export?type=checks` is the reconciliation CSV.
+  The board-facing how-to is the collapsible guide at the top of the list in `admin.html`.
+- **Preview shares the production D1 and R2** (`[env.preview.*]` bindings point at the same
+  database and bucket). A separate preview database was considered on 2026-09-16 and Dylan
+  decided against it: the season is closed, test rows get cleaned up before launch, and there
+  are no real applicant emails yet. Name test rows so they're obviously tests, and don't send
+  test mail to anyone but Dylan.
 - **The open/closed state comes from the server now.** `GET /api/config` reports
   `APPLICATIONS_OPEN` for the environment that serves it, and `SiteConfig.load()` in
   `site-config.js` corrects the page after the static default has painted. That's why
@@ -115,6 +159,25 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
 - Pages project **`scholarship-website`** → live at **andresen-scholarships.org**.
 - D1 database **`andresen-scholarships`** (id in `wrangler.toml`).
 - R2 bucket **`andresen-scholarship-uploads`**.
+- **No DMARC record, deliberately (decided 2026-08-15).** Cloudflare's DNS Recommendations
+  panel nags about this; leave it alone. Dylan's call: at ~40 applicants a year nobody is
+  going to impersonate the trust, and the parts that actually protect outbound mail are
+  already right — Resend's DKIM key is at `resend._domainkey.andresen-scholarships.org`
+  (**root** domain, so it aligns exactly with a `scholarships@andresen-scholarships.org`
+  From) and `send.` carries `v=spf1 include:amazonses.com ~all`. DMARC at `p=none` would
+  add nothing but XML reports. Revisit only if the trust starts sending bulk mail from a
+  new service. Don't re-propose it unprompted.
+- **`www` redirects to the apex (added 2026-08-15).** It used to be NXDOMAIN — anyone
+  typing `www.andresen-scholarships.org` got a browser error, which Cloudflare's own DNS
+  Recommendations panel flagged. Two dashboard pieces, neither in this repo: a **proxied
+  CNAME `www` → `andresen-scholarships.org`**, plus a Redirect Rule from Cloudflare's
+  *"Redirect from WWW to root"* template (`https://www.*` → `https://${1}`, **301**).
+  **"Preserve query string" is deliberately checked** — the template ships it off, and
+  without it a `recommend.html?token=…` link reached via `www` would lose the token and
+  strand the teacher on a broken page. Verified: `www` root and `www` + path + query both
+  301 to the apex with the query intact. `_redirects` can't do this — Cloudflare Pages
+  explicitly does not support domain-level redirects there, and a root
+  `functions/_middleware.ts` would put a Worker in front of every static asset.
 
 ## Config model (important)
 - `wrangler.toml [vars]` = **production** defaults (committed, non-secret).
@@ -162,26 +225,32 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   `[vars]` and `applicationsOpen: false` in `site-config.js`, so the Apply buttons read
   "Applications Closed", `apply.html` shows the closed notice instead of the form, and
   `POST /api/apply` returns 403. Flip **both** when the board opens the 2027 season.
-- **Turnstile is configured but has never actually run (2026-08-09).** Real widget in
-  Managed mode; its site key is in `apply.html` and live on production, and
-  `TURNSTILE_SECRET` is set in the dashboard for **both** Production and Preview. The two
-  must stay a matched pair — a token minted by one widget fails `siteverify` against a
-  different widget's secret, and the applicant just sees "Bot verification failed" with no
-  way past it. That was the state for a while when the secret was set before the real site
-  key had merged.
-  **⚠️ Nothing has exercised the check yet.** `apply.ts` returns 403 for a closed season
-  *before* it reaches `verifyTurnstile()`, so no request has ever reached it, and
-  `verifyTurnstile()` also returns `true` outright when the secret is missing. "Configured"
-  here means configuration was verified, not behaviour.
-  **Unconfirmed: the widget's hostname list.** It refused to render on `localhost` with
-  console error **110200** ("domain not allowed"), so at least one host was missing; whether
-  `andresen-scholarships.org`, `www.` and `preview.` are on it has never been checked. An
-  unlisted host renders an empty gap where the checkbox should be and fails silently —
-  the form still submits.
-  **Before opening 2027:** flip preview open, load `preview.andresen-scholarships.org/apply`,
-  confirm the checkbox appears and a submission goes through, then close preview again.
-  Preview writes to the live D1 and R2, so delete the test row afterwards — and note the
-  one-application-per-student rule burns that email and phone for the season until you do.
+- **Turnstile works — verified end to end 2026-08-15.** Real widget in Managed mode; site
+  key `0x4AAAAAAELI18EAld-9mftK` is in `apply.html`, and `TURNSTILE_SECRET` is set in the
+  dashboard for **both** Production and Preview. The two must stay a matched pair — a token
+  minted by one widget fails `siteverify` against a different widget's secret, and the
+  applicant just sees "Bot verification failed" with no way past it. Both halves have now
+  actually run, where before this was configuration inspection only:
+  - **Hostname list — good.** The widget issues a token on `andresen-scholarships.org`
+    *and* `preview.andresen-scholarships.org`, and renders on the real `/apply` form (green
+    "Success!" above Submit). The old **110200** was `localhost` only, which is simply not
+    on the list and doesn't need to be — `verifyTurnstile()` returns `true` when the secret
+    is absent, so local dev never needs the widget.
+  - **Site key / secret pair — matched.** Preview was opened briefly and `POST /api/apply`
+    called twice: a bogus token got `Bot verification failed` (proving the secret is set
+    and `siteverify` really runs — this code path had never executed before), and a real
+    token from the page's own widget was **accepted**, falling through to field validation.
+  **Re-testing is cheap, so do it if the key or secret ever changes.** Turnstile is checked
+  in `apply.ts` *before* field validation and before any write, so a POST carrying only
+  `cf-turnstile-response` separates the two outcomes — "Bot verification failed" vs. a list
+  of required-field errors — while writing nothing to D1 or R2 and sending no email. That's
+  why the 2026-08-15 test needed no cleanup and burned no email/phone against the
+  one-application rule. Mint a real token by reading `[name="cf-turnstile-response"]` off a
+  loaded `/apply` page; it's single-use and expires in ~5 minutes.
+  **The season must be open for any of this** — `apply.ts` 403s first. Flip
+  `[env.preview.vars] APPLICATIONS_OPEN` and flip it back after. ⚠️ **`preview.andresen-
+  scholarships.org` is bound to a branch literally named `preview`** (see `APP_BASE_URL`
+  above) — pushing any other branch will not change what that host serves.
 - The 2026 applications are **not** migrated — the system starts fresh for 2027.
 
 ### Planned: send arbitrary email from the board dashboard
@@ -194,6 +263,7 @@ settled if you pick this up:
 - Send **one message per recipient**, not one with everyone in `To` — applicants must not
   see each other's addresses.
 - `replyTo` is already handled: use `contactEmail(env)` like the other applicant-facing mail.
-- Log every send to D1. Mid-season the board needs to answer "did we already tell this student?"
+- Log every send to D1 — **done**: `sendEmail()` writes `email_log` for every message, and the
+  detail view's Email History panel reads it. Add a new `EmailKind` and label, nothing more.
 - Resend free tier is 100/day, 3,000/month — irrelevant at ~40 applicants, don't design around it.
 - Put it behind the existing `functions/api/admin/_middleware.ts` auth like every other admin route.

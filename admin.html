@@ -14,6 +14,8 @@
 </head>
 
 <body class="admin-body">
+	<a class="skip-link" href="#main">Skip to main content</a>
+
 
 	<!-- Top bar -->
 	<header class="admin-top">
@@ -39,7 +41,7 @@
 		</div>
 	</header>
 
-	<main class="admin-main">
+	<main id="main" tabindex="-1" class="admin-main">
 		<div class="wrap">
 
 			<!-- Login -->
@@ -86,10 +88,62 @@
 						<option value="">Any recommendation</option>
 						<option value="submitted">Received</option>
 						<option value="pending">Awaiting teacher</option>
+						<option value="failed">Request failed to send</option>
+					</select>
+					<select id="filter-check" aria-label="Filter by check or flag">
+						<option value="">Any check</option>
+						<optgroup label="Checks">
+							<option value="needs_check">Awarded, needs a check</option>
+							<option value="outstanding">Not cashed yet</option>
+							<option value="follow_up">Needs follow-up</option>
+							<option value="cleared">Cashed</option>
+						</optgroup>
+						<optgroup label="Flags">
+							<option value="shared_phone">Shared phone number</option>
+						</optgroup>
 					</select>
 					<span class="spacer"></span>
 					<a href="/api/admin/export" class="btn ghost small" download>Export CSV</a>
+					<a href="/api/admin/export?type=checks" class="btn ghost small" download>Export Checks</a>
 				</div>
+
+				<details class="board-guide">
+					<summary>How to follow up, fix details, and track checks</summary>
+					<div class="board-guide-body">
+						<h3>A teacher hasn't sent their recommendation</h3>
+						<p>Open the application and find <strong>Teacher Recommendation</strong>. <em>Email the request</em>
+							sends the teacher their private link again. If the address is wrong, use <em>Change teacher</em>
+							first, then send. Changing the email address makes a new link, and the old one stops working.</p>
+						<p><strong>Request failed</strong> in the list means the email service refused the message, usually
+							because the address is mistyped. <strong>Sent</strong> means the service accepted it. It can't
+							tell us whether it reached the inbox or the spam folder, so if a teacher says they never got it,
+							ask them to check spam, or use <em>Copy private link</em> and send it yourself.</p>
+						<p>The student gets an email automatically when their recommendation arrives.</p>
+
+						<h3>Fixing a typo or a changed college</h3>
+						<p>Open the application and press <em>Edit</em> on <strong>General</strong>. Saving never emails
+							anyone. The student's original answer stays visible under the field and in
+							<strong>Change History</strong>. Grades, scores and essays can't be edited here.</p>
+
+						<h3>Two applications with the same phone number</h3>
+						<p>Brothers and sisters can both apply, so a shared phone number is accepted and flagged instead of
+							refused. If they're different students, press <em>They're different students</em>. If it's the
+							same student applying twice, keep the first application and mark the later one
+							<em>Not awarded</em> with a note. A repeat <strong>email address</strong> is still refused
+							automatically.</p>
+
+						<h3>Tracking a check until it's cashed</h3>
+						<p>After awarding, open the application and use <em>Record a check</em> under
+							<strong>Scholarship Check</strong>. Press <em>Update</em> when it's handed out and again when it
+							shows up on the bank statement. Every date is optional. Leave one blank rather than guess.</p>
+						<p>If a student loses a check, set it to <em>Reported lost</em>. That doesn't stop payment, so call
+							the bank. Then use <em>Record replacement check</em>. Once the bank confirms the stop payment,
+							set the old check to <em>Voided</em>. Only the newest check counts toward the money still out,
+							so a replacement is never counted as a second award.</p>
+						<p><em>Export Checks</em> downloads every check, including replaced ones, for comparing
+							against bank statements.</p>
+					</div>
+				</details>
 
 				<div class="table-card">
 					<table class="admin-table">

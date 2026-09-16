@@ -1,62 +1,10 @@
--- Andresen Scholarships application database (Cloudflare D1 / SQLite).
--- Apply with:  npm run db:init:local   (local)  /  npm run db:init:remote  (production)
-
-CREATE TABLE IF NOT EXISTS applications (
-  id            TEXT PRIMARY KEY,
-  scholarship   TEXT NOT NULL,            -- 'ag' | 'memorial'
-  status        TEXT NOT NULL DEFAULT 'submitted',  -- 'submitted' | 'in_review' | 'awarded' | 'not_awarded'
-  created_at    TEXT NOT NULL,            -- ISO 8601 timestamp
-
-  -- Board review (admin dashboard; see migrations/0002_board_review.sql)
-  score         INTEGER,                  -- board score, 1–5
-  board_notes   TEXT,                     -- shared board notes
-  phone_reviewed_at TEXT,                 -- shared phone confirmed as different students (0004)
-
-  -- General information
-  full_name     TEXT NOT NULL,
-  phone         TEXT,
-  email         TEXT NOT NULL,
-  address       TEXT,
-  high_school   TEXT,
-  college       TEXT,
-  date_accepted TEXT,
-  major         TEXT,
-  parent_names  TEXT,
-
-  -- Academic information
-  gpa           TEXT,
-  class_rank    TEXT,
-  class_size    TEXT,
-  act_sat       TEXT,
-  awards        TEXT,
-  activities    TEXT,
-
-  -- Uploaded file keys (objects live in R2)
-  transcript_key    TEXT,
-  essay_key         TEXT,
-  applicant_sig_key TEXT,
-  parent_sig_key    TEXT
-);
-
-CREATE INDEX IF NOT EXISTS idx_applications_created_at ON applications(created_at);
-
-CREATE TABLE IF NOT EXISTS recommendations (
-  id             TEXT PRIMARY KEY,
-  application_id TEXT NOT NULL REFERENCES applications(id),
-  teacher_name   TEXT NOT NULL,
-  teacher_email  TEXT NOT NULL,
-  token          TEXT NOT NULL UNIQUE,   -- random, unguessable; used in the teacher link
-  status         TEXT NOT NULL DEFAULT 'pending',  -- 'pending' | 'submitted'
-  rec_file_key   TEXT,
-  rec_text       TEXT,
-  created_at     TEXT NOT NULL,
-  submitted_at   TEXT
-);
-
-CREATE INDEX IF NOT EXISTS idx_recommendations_application ON recommendations(application_id);
-CREATE INDEX IF NOT EXISTS idx_recommendations_token ON recommendations(token);
-
--- Board operations (see migrations/0004_operations.sql)
+-- Board operations: email history, correction history, scholarship checks, and
+-- the shared-phone review flag. Purely additive — nothing existing is changed.
+--
+-- Apply with:  npm run db:migrate:local  /  npm run db:migrate:remote
+-- If the remote --file import fails (see CLAUDE.md), run each statement as its own
+-- `wrangler d1 execute --remote --command "…"`. The CREATEs are safe to re-run; the
+-- ALTER is not (SQLite has no IF NOT EXISTS for ADD COLUMN).
 
 -- Every email the system tries to send, one row per message. Answers "did we
 -- already tell this student?" and shows the board a failed teacher request.
@@ -109,3 +57,7 @@ CREATE TABLE IF NOT EXISTS checks (
   updated_at        TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_checks_application ON checks(application_id);
+
+-- Set when the board confirms that applications sharing this one's phone number
+-- are different students (siblings), so the dashboard stops flagging it.
+ALTER TABLE applications ADD COLUMN phone_reviewed_at TEXT;
