@@ -8,7 +8,8 @@ export type EmailKind =
   | "duplicate_notice"
   | "board_new_application"
   | "board_recommendation_received"
-  | "applicant_recommendation_received";
+  | "applicant_recommendation_received"
+  | "check_reminder";
 
 interface SendArgs {
   to: string[];
@@ -228,6 +229,35 @@ export async function emailApplicantRecommendationReceived(
          <strong>${escapeHtml(scholarshipLabel)}</strong>. Your application is now complete — there's
          nothing else you need to do.</p>
       <p>Best of luck,<br>The Andresen Family</p>
+      ${contactLine(env)}
+    `),
+  });
+}
+
+// (2d) Remind an awarded student to cash a check they've been handed. Sent only
+// when a trustee presses the button — never on a schedule.
+export async function emailCheckReminder(
+  env: Env, applicationId: string, to: string, name: string, scholarshipLabel: string,
+  checkNumber: string | null, amount: string, logId?: string
+): Promise<SendResult | null> {
+  const which = checkNumber ? ` (check #${escapeHtml(checkNumber)})` : "";
+  return await sendEmail(env, {
+    to: [to],
+    replyTo: contactEmail(env),
+    kind: "check_reminder",
+    applicationId,
+    logId,
+    subject: "Reminder: please cash your Andresen Scholarship check",
+    html: wrap(`
+      <p>Hi ${escapeHtml(name)},</p>
+      <p>Congratulations again on your <strong>${escapeHtml(scholarshipLabel)}</strong>. Our records
+         show that your scholarship check for <strong>${escapeHtml(amount)}</strong>${which} hasn't
+         been cashed yet.</p>
+      <p>Please cash or deposit it within the next two weeks.</p>
+      <p>If the check was lost or damaged, don't worry — just reply to this email and we'll help
+         arrange a replacement. If you've already deposited it, thank you, and please ignore this
+         reminder; it can take a few days to show up on our end.</p>
+      <p>Best wishes,<br>The Andresen Family</p>
       ${contactLine(env)}
     `),
   });
