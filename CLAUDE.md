@@ -263,7 +263,24 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   scholarships.org` is bound to a branch literally named `preview`** (see `APP_BASE_URL`
   above) — pushing any other branch will not change what that host serves.
 - The 2026 applications are **not** migrated — the system starts fresh for 2027.
-- **Test rows to delete before the season opens.** Two applications with ids `test-preview-0001`
+- **Board operations merged to `main` 2026-09-16** (recommendation follow-up, corrections,
+  shared-phone flag, check tracking, cash-the-check reminder, phone layout), after Dylan
+  tested it on the preview, including real emails to his Gmail.
+
+### Before the 2027 season opens
+Open items Dylan wants settled before applications go public. Check this list whenever the
+season-opening work comes up.
+- **Confirm the email wording with Pam.** Every email to students and teachers is signed
+  "The Andresen Family" (`functions/lib/email.ts`: applicant confirmation, teacher request,
+  duplicate notice, recommendation received, cash-the-check reminder). Andresen is Pam's
+  maiden name, so no one on the board carries it now, and the sign-off may read strangely —
+  or it may be fine. Her call. The public pages' "the Andresen Family of rural Chadwick" is
+  history, not a sign-off, and isn't part of this question.
+- **Review "please cash or deposit it within the next two weeks"** in the cash-the-check
+  reminder (`emailCheckReminder` in `email.ts`; the dashboard guide in `admin.html` repeats
+  it). The two-week idea came from Dylan's parents for the check paperwork; confirm the
+  wording and the time frame with them, and keep the email and the paperwork saying the same.
+- **Test rows to delete.** Two applications with ids `test-preview-0001`
   and `test-preview-0002` (names start "TEST Preview") were added to the shared D1 on 2026-09-16
   to review the board-operations features, along with their `recommendations`, `email_log` and
   any `change_log`/`checks` rows the review creates. Because preview shares production's
