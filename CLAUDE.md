@@ -252,6 +252,14 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   scholarships.org` is bound to a branch literally named `preview`** (see `APP_BASE_URL`
   above) — pushing any other branch will not change what that host serves.
 - The 2026 applications are **not** migrated — the system starts fresh for 2027.
+- **Test rows to delete before the season opens.** Two applications with ids `test-preview-0001`
+  and `test-preview-0002` (names start "TEST Preview") were added to the shared D1 on 2026-09-16
+  to review the board-operations features, along with their `recommendations`, `email_log` and
+  any `change_log`/`checks` rows the review creates. Because preview shares production's
+  database, they also show on the live dashboard until removed. Delete children first
+  (foreign keys): `checks`, `change_log`, `email_log`, `recommendations`, then `applications`,
+  each `WHERE application_id LIKE 'test-preview-%'` (`id LIKE …` for `applications`). The one
+  other row, Pam's 2026-07-31 application, is hers — leave it for her to decide.
 
 ### Planned: send arbitrary email from the board dashboard
 Dylan wants to email anyone (applicants, teachers, one-offs) from `admin.html` — both
