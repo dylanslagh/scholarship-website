@@ -7,8 +7,8 @@
     "dev": "wrangler pages dev .",
     "db:init:local": "wrangler d1 execute andresen-scholarships --local --file=./schema.sql",
     "db:init:remote": "wrangler d1 execute andresen-scholarships --remote --file=./schema.sql",
-    "db:migrate:local": "wrangler d1 execute andresen-scholarships --local --file=./migrations/0002_board_review.sql",
-    "db:migrate:remote": "wrangler d1 execute andresen-scholarships --remote --file=./migrations/0002_board_review.sql",
+    "db:migrate:local": "wrangler d1 execute andresen-scholarships --local --file=./migrations/0004_operations.sql",
+    "db:migrate:remote": "wrangler d1 execute andresen-scholarships --remote --file=./migrations/0004_operations.sql",
     "typecheck": "tsc --noEmit",
     "deploy": "git push origin main"
   },

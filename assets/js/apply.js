@@ -376,7 +376,7 @@
             if (draftNotice) draftNotice.hidden = true;
             form.style.display = "none";
             showMessage("success",
-              "Thank you! Your application has been submitted. A confirmation email is on its way, and your teacher has been sent a private link to complete your recommendation.");
+              "Thank you! Your application has been submitted. We're emailing your teacher a private link to complete your recommendation, and a confirmation email is on its way to you.");
           } else {
             if (!showServerErrors(res.body)) {
               showMessage("error", res.body.error || "Something went wrong. Please try again.");

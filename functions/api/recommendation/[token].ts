@@ -6,7 +6,7 @@ import {
   markRecommendationSubmitted,
 } from "../../lib/db";
 import { putUpload, validateFile } from "../../lib/storage";
-import { emailBoardRecommendationReceived } from "../../lib/email";
+import { emailBoardRecommendationReceived, emailApplicantRecommendationReceived } from "../../lib/email";
 import { SCHOLARSHIP_LABELS } from "../apply";
 
 function asFile(v: File | string | null): File | null {
@@ -64,14 +64,27 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     fileKey = (await putUpload(env, rec.application_id, "recommendation", file)).key;
   }
 
-  await markRecommendationSubmitted(env, token, fileKey, text || null);
+  // Conditional on still being pending, so a double-click or a retry can't record
+  // it twice or send the applicant a second confirmation.
+  const recorded = await markRecommendationSubmitted(env, token, fileKey, text || null);
+  if (!recorded) {
+    return json({ ok: false, error: "A recommendation has already been submitted for this student." }, 409);
+  }
 
   const app = await getApplicationById(env, rec.application_id);
   const adminLink = `${env.APP_BASE_URL}/admin.html`;
   waitUntil(
-    emailBoardRecommendationReceived(
-      env, app?.full_name || "an applicant", rec.teacher_name, adminLink
-    ).catch((e) => console.error("Board notify failed", e))
+    Promise.all([
+      emailBoardRecommendationReceived(
+        env, rec.application_id, app?.full_name || "an applicant", rec.teacher_name, adminLink
+      ),
+      app
+        ? emailApplicantRecommendationReceived(
+            env, app.id, app.email, app.full_name,
+            SCHOLARSHIP_LABELS[app.scholarship] || "Andresen Scholarship", rec.teacher_name
+          )
+        : Promise.resolve(null),
+    ]).catch((e) => console.error("Recommendation notices failed", e))
   );
 
   return json({ ok: true });

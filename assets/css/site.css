@@ -480,7 +480,7 @@ summary:focus-visible {
 .pw-toggle:hover { color: var(--green-deep); text-decoration: underline; }
 
 /* Stat cards */
-.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.6rem; }
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 1rem; margin-bottom: 1.6rem; }
 .stat {
   background: var(--card);
   border: 1px solid var(--line);
@@ -571,6 +571,7 @@ summary:focus-visible {
 .score-picker button.on { color: var(--gold); }
 .save-note { font-size: 0.85rem; color: var(--ink-faint); margin-top: 0.7em; min-height: 1.2em; }
 .save-note.saved { color: var(--green-deep); }
+.save-note:empty { min-height: 0; margin: 0; }
 
 .rec-quote {
   background: #fbf8f0;
@@ -581,7 +582,94 @@ summary:focus-visible {
   font-size: 0.98rem;
 }
 
-.copy-link { font-size: 0.85rem; }
+/* ---------- Board operations: follow-up, corrections, checks ---------- */
+.badge.failed { background: var(--red-wash); color: var(--red); }
+.badge.flag { background: var(--gold-wash); color: #8a6410; }
+.badge.ck-issued, .badge.ck-handed_out { background: var(--gold-wash); color: #8a6410; }
+.badge.ck-cleared { background: var(--green-wash); color: var(--green-deep); }
+.badge.ck-lost { background: var(--red-wash); color: var(--red); }
+.badge.ck-void { background: #eeeae1; color: var(--ink-faint); }
+.admin-table .ck-line { margin-top: 0.3em; }
+.admin-table .ck-follow_up, .admin-table .ck-needs_check { color: var(--red); font-weight: 600; }
+
+.panel { position: relative; }
+.panel-action { position: absolute; top: 1.1rem; right: 1.6rem; }
+
+.alert-box {
+  background: var(--gold-wash);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.85rem 1.1rem;
+  margin: 0 0 1.4rem;
+  font-size: 0.95rem;
+}
+.alert-box p { margin: 0 0 0.5em; }
+.alert-box ul { margin: 0 0 0.6em; padding-left: 1.2em; }
+.alert-box.error { background: var(--red-wash); color: var(--red); border-color: #e8c3b6; margin-bottom: 0.9rem; }
+.alert-box.error .subtle { color: inherit; opacity: 0.8; font-size: 0.85em; margin-top: 0.3em; word-break: break-word; }
+.alert-box.quiet { background: transparent; color: var(--ink-faint); padding: 0; border: none; font-size: 0.9rem; }
+
+.was { font-size: 0.82rem; color: var(--ink-faint); margin-top: 0.15em; }
+.subtle { color: var(--ink-faint); font-size: 0.9em; }
+.error-text { color: var(--red); word-break: break-word; }
+
+.button-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.8rem; }
+.button-row .spacer { flex: 1; }
+.link-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
+  color: var(--red); font: inherit; font-size: 0.85rem; text-decoration: underline;
+}
+
+.history-panel summary { cursor: pointer; list-style: none; }
+.history-panel summary::-webkit-details-marker { display: none; }
+.history-panel summary h3 { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+.history-panel summary h3::before { content: "▸ "; color: var(--ink-faint); }
+.history-panel[open] summary h3::before { content: "▾ "; }
+.history-panel[open] summary { margin-bottom: 0.9em; border-bottom: 1px solid var(--line); padding-bottom: 0.45em; }
+.history-list { list-style: none; padding: 0; margin: 0; }
+.history-list > li { border-bottom: 1px solid var(--line); padding: 0.6em 0; font-size: 0.92rem; }
+.history-list > li:last-child { border-bottom: none; }
+.history-list.compact > li { padding: 0.3em 0; font-size: 0.88rem; }
+.history-list .diff { margin: 0.3em 0 0; padding-left: 1.2em; }
+.history-list .diff s { color: var(--ink-faint); }
+
+.edit-form { margin-top: 0.4rem; }
+.edit-form label { display: block; font-weight: 600; font-size: 0.9rem; margin: 0.8em 0 0.25em; }
+.edit-form input, .edit-form select, .edit-form textarea {
+  width: 100%;
+  padding: 0.5em 0.65em;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  background: #fff;
+  color: var(--ink);
+}
+.edit-form textarea { resize: vertical; }
+.edit-form .has-error { border-color: var(--red); }
+.edit-form .field-error { color: var(--red); font-size: 0.85rem; font-weight: 600; margin: 0.3em 0 0; }
+.edit-form .hint { margin: 0.6em 0 0; }
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 0.9rem; }
+
+.check-card { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 0.8rem 1rem; margin-top: 0.9rem; }
+.check-card.replaced { background: #fbf8f0; }
+.check-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.check-grid { display: grid; grid-template-columns: auto 1fr; gap: 0.2em 0.9em; margin: 0.6em 0 0; font-size: 0.88rem; }
+.check-grid dt { color: var(--ink-faint); font-weight: 600; }
+.check-grid dd { margin: 0; white-space: pre-wrap; }
+.check-card .button-row { margin-top: 0.6rem; }
+
+.board-guide {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 1.1rem;
+  font-size: 0.95rem;
+}
+.board-guide summary { cursor: pointer; padding: 0.75rem 1.1rem; font-weight: 600; color: var(--green-deep); }
+.board-guide-body { padding: 0 1.3rem 1rem; max-width: 70ch; }
+.board-guide-body h3 { font-size: 1rem; margin: 1em 0 0.3em; color: var(--green-deep); }
+.board-guide-body p { margin: 0 0 0.6em; }
 
 /* ---------- 404 ---------- */
 .lost { text-align: center; padding: 5rem 1rem; }
@@ -608,6 +696,7 @@ summary:focus-visible {
   .site-nav { justify-content: center; }
   .detail-grid { grid-template-columns: 1fr; gap: 0 0; }
   .detail-grid dt { margin-top: 0.6em; }
+  .edit-grid { grid-template-columns: 1fr; }
 }
 
 /* ============================================================
@@ -616,7 +705,7 @@ summary:focus-visible {
 
 @media print {
   body { background: #fff; font-size: 12px; }
-  .admin-top, .toolbar, .stat-row, .detail-head .actions, .review-panel .no-print,
+  .admin-top, .toolbar, .stat-row, .detail-head .actions, .no-print, .board-guide,
   .back-link, .site-foot { display: none !important; }
   .panel, .table-card { box-shadow: none; border-color: #ccc; break-inside: avoid; }
   .detail-cols { grid-template-columns: 1fr; }

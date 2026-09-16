@@ -4,8 +4,13 @@ import {
   getApplicationById,
   getRecommendationForApplication,
   updateApplicationReview,
+  findPhoneMatches,
+  listEmailLog,
+  listChangeLog,
   APPLICATION_STATUSES,
+  EDITABLE_APPLICATION_FIELDS,
 } from "../../../lib/db";
+import { listChecksForApplication, summarizeChecks, CHECK_STATUS_LABELS } from "../../../lib/checks";
 import { SCHOLARSHIP_LABELS } from "../../apply";
 
 export const onRequestGet: PagesFunction<Env> = async ({ env, params }) => {
@@ -13,12 +18,46 @@ export const onRequestGet: PagesFunction<Env> = async ({ env, params }) => {
   const app = await getApplicationById(env, id);
   if (!app) return json({ ok: false, error: "Application not found." }, 404);
 
-  const rec = await getRecommendationForApplication(env, id);
+  const [rec, emails, changes, checks, phoneMatches] = await Promise.all([
+    getRecommendationForApplication(env, id),
+    listEmailLog(env, id),
+    listChangeLog(env, id),
+    listChecksForApplication(env, id),
+    findPhoneMatches(env, app),
+  ]);
+
+  // What the applicant first typed, for any field the board has since corrected:
+  // the `before` of the oldest change to that field.
+  const original: Record<string, string | null> = {};
+  const editable = EDITABLE_APPLICATION_FIELDS as readonly string[];
+  for (const entry of [...changes].reverse()) {
+    if (entry.entity !== "application") continue;
+    for (const c of entry.changes) {
+      if (editable.includes(c.field) && !(c.field in original)) original[c.field] = c.before;
+    }
+  }
+
+  // The shared-phone warning stays up until every application in the group has
+  // been confirmed as a different student.
+  const phoneNeedsReview = phoneMatches.length > 0 &&
+    (!app.phone_reviewed_at || phoneMatches.some((m) => !m.phone_reviewed_at));
 
   return json({
     ok: true,
     application: app,
     scholarship_label: SCHOLARSHIP_LABELS[app.scholarship] || app.scholarship,
+    original_values: original,
+    phone_matches: phoneMatches.map((m) => ({
+      ...m,
+      scholarship_label: SCHOLARSHIP_LABELS[m.scholarship] || m.scholarship,
+    })),
+    phone_needs_review: phoneNeedsReview,
+    // Board-only history. Recommendation text never appears in either list.
+    emails,
+    changes,
+    checks,
+    check_status_labels: CHECK_STATUS_LABELS,
+    check_summary: summarizeChecks(app.status, checks),
     recommendation: rec
       ? {
           teacher_name: rec.teacher_name,

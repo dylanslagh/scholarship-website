@@ -20,13 +20,18 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   recommendation, opened via a tokenized link), `admin.html` (password-gated board dashboard).
   Info pages: `index.html`, `ag-scholarship.html`, `scholarship.html`. Also `404.html`, `favicon.svg`.
 - Backend: `functions/api/*` — `apply.ts`, `recommendation/[token].ts`, `admin/*`
-  (login, applications, application/[id] incl. PATCH for board review, file/[[key]], export = CSV);
+  (login, applications, application/[id] incl. PATCH for board review, file/[[key]],
+  export = CSV, plus the board-operations routes below);
   `functions/api/admin/_middleware.ts` gates admin routes. Shared code in `functions/lib/*`
-  (env, db, storage, auth, email, validation).
-- `schema.sql` — D1 tables (`applications`, `recommendations`). `migrations/0002_board_review.sql`
-  adds `score` + `board_notes`. **Applied to both local and remote D1.** Gotcha: `db:migrate:remote`
+  (env, db, storage, auth, email, validation, checks).
+- `schema.sql` — D1 tables. `migrations/0002_board_review.sql` adds `score` + `board_notes`
+  (**applied to local and remote**). `migrations/0004_operations.sql` adds `email_log`,
+  `change_log`, `checks` and `applications.phone_reviewed_at` (**applied to local and remote
+2026-09-16**, statement by statement). Gotcha: `db:migrate:remote`
   (`wrangler d1 execute --remote --file=…`) can fail with a Cloudflare **import API** error; running
-  each `ALTER` as a separate `wrangler d1 execute --remote --command "…"` uses the query API and works.
+  each statement as a separate `wrangler d1 execute --remote --command "…"` uses the query API and works.
+- `OPERATIONS-HANDOFF-2026-09-16.md` — the brief (from a ChatGPT review session) that the
+  board-operations features were built from. Historical; this file describes what was built.
 - `wrangler.toml` — Cloudflare config: D1/R2 bindings + production `[vars]`.
 - Front-end JS: `assets/js/{apply,admin,recommend,signature-pad,site-config,status-toggle}.js`.
 - Styles: `assets/css/site.css` is the whole design system (2026-07 redesign, no jQuery/template
@@ -85,16 +90,55 @@ Andresen Charitable Trust**. It replaces JotForm starting the **2027 season**. T
   glance what DNS and rule inspection can only circle around.
   **No code is involved either way**; nothing in `functions/` touches inbound mail.
 - **One application per student, to one scholarship.** Said on `apply.html`, both scholarship
-  pages and `index.html`, and enforced in `apply.ts`: `findDuplicateApplication` rejects a
-  repeat **email address** or **phone number** with a 409 + `field`, so the browser highlights
-  the offending box, and `emailDuplicateApplication` tells the applicant their first one still
-  stands. Phone comparison is digits-only on the last 10, so formatting doesn't matter. The
-  check is scoped to the current season via `seasonStartISO()` (derived from `DEADLINE`, season
-  opens the previous July) — otherwise a 2027 row would block a 2028 sibling forever. **Known
-  trade-off:** two seniors in one household sharing a phone means the second can't submit; the
-  rejection email invites a reply (routed to the first `BOARD_EMAILS` address) and the fix is to
-  delete the earlier row in D1. Checked *before* the R2 uploads so a rejected duplicate leaves
-  no orphaned files.
+  pages and `index.html`, and enforced in `apply.ts`: `findApplicationByEmail` rejects a
+  repeat **email address** (case-insensitive) with a 409 + `field`, so the browser highlights
+  the box, and `emailDuplicateApplication` tells the applicant their first one still stands.
+  Scoped to the current season via `seasonStartISO()` (derived from `DEADLINE`, season opens
+  the previous July). Checked *before* the R2 uploads so a rejected duplicate leaves no
+  orphaned files.
+  **A shared phone number is no longer refused (changed 2026-09-16, Dylan approved).** It used
+  to be, which meant two seniors in one household couldn't both apply. Now both are accepted
+  and the dashboard flags the pair ("Shared phone" badge, a filter, and a warning on the
+  detail page) until the board presses *They're different students*, which stamps
+  `phone_reviewed_at` on every application in the group. A later third match re-raises the
+  flag for all of them; correcting a phone number clears that application's stamp. Phone
+  comparison is digits-only on the last 10, grouped by season (`seasonOf()`, July–June).
+  A true repeat under a new email is resolved by the board: keep the first, mark the later
+  one Not awarded with a note — nothing is deleted.
+- **Board operations (built 2026-09-16 from the handoff brief).** Three features on the
+  dashboard, all behind the admin middleware:
+  - **Email history.** `sendEmail()` records *every* attempt in `email_log` (kind, recipients,
+    outcome, Resend message id, error) and never throws — callers read the returned outcome.
+    `accepted` means Resend took it, **not** that it arrived; the UI says "Sent" with that
+    caveat. `apply.ts` sends the teacher request *first*, so the applicant confirmation and
+    board alert can say truthfully whether it went out.
+  - **Recommendation follow-up.** `application/[id]/resend-request` re-sends the teacher link.
+    Duplicate clicks are stopped by `reserveEmailSend()` — a single `INSERT … WHERE NOT EXISTS`
+    that claims a 2-minute window; failed sends don't count, so a retry is never blocked.
+    `application/[id]/teacher` corrects name/email and **saves only**; a changed email gets a
+    fresh token so the old link dies. Refused once the recommendation is submitted.
+    `markRecommendationSubmitted` is conditional on `status = 'pending'`, so a double post
+    records once, and only the winner emails the applicant
+    (`emailApplicantRecommendationReceived` — teacher's name only, never the text or link).
+  - **Corrections.** `application/[id]/details` edits contact/college fields only
+    (`EDITABLE_APPLICATION_FIELDS`; academic answers are deliberately not editable). Saves
+    only, never emails. Every save goes to `change_log` as before/after JSON; the detail view
+    derives "originally submitted as" from the oldest `before`. Changing an email to one
+    another application this season uses is refused.
+  - **Checks.** `checks` rows, entered by hand; `lib/checks.ts` `summarizeChecks()` is the one
+    place the rules live. The *current* check is the one no other check replaces; only it
+    counts toward the outstanding amount, so a replacement is never a second award.
+    States: needs_check / outstanding / follow_up / cleared. Follow-up covers lost or voided
+    with no replacement, a replaced check not yet voided, a replaced check that was cashed
+    anyway, two checks cashed, and two unlinked checks. A status is a note — nothing contacts
+    a bank. `checks/[id]` PATCH logs to `change_log`; DELETE is for entry mistakes only and is
+    refused for a check that something replaces. `export?type=checks` is the reconciliation CSV.
+  The board-facing how-to is the collapsible guide at the top of the list in `admin.html`.
+- **Preview shares the production D1 and R2** (`[env.preview.*]` bindings point at the same
+  database and bucket). A separate preview database was considered on 2026-09-16 and Dylan
+  decided against it: the season is closed, test rows get cleaned up before launch, and there
+  are no real applicant emails yet. Name test rows so they're obviously tests, and don't send
+  test mail to anyone but Dylan.
 - **The open/closed state comes from the server now.** `GET /api/config` reports
   `APPLICATIONS_OPEN` for the environment that serves it, and `SiteConfig.load()` in
   `site-config.js` corrects the page after the static default has painted. That's why
@@ -219,6 +263,7 @@ settled if you pick this up:
 - Send **one message per recipient**, not one with everyone in `To` — applicants must not
   see each other's addresses.
 - `replyTo` is already handled: use `contactEmail(env)` like the other applicant-facing mail.
-- Log every send to D1. Mid-season the board needs to answer "did we already tell this student?"
+- Log every send to D1 — **done**: `sendEmail()` writes `email_log` for every message, and the
+  detail view's Email History panel reads it. Add a new `EmailKind` and label, nothing more.
 - Resend free tier is 100/day, 3,000/month — irrelevant at ~40 applicants, don't design around it.
 - Put it behind the existing `functions/api/admin/_middleware.ts` auth like every other admin route.

@@ -1,14 +1,15 @@
 import type { Env } from "../lib/env";
-import { applicationsOpen, boardEmails, json, badRequest, seasonStartISO } from "../lib/env";
+import { applicationsOpen, json, badRequest, seasonStartISO } from "../lib/env";
 import { validateApplicationFields, verifyTurnstile } from "../lib/validation";
 import { putUpload, putBytes, validateFile, decodeDataUrl } from "../lib/storage";
-import { findDuplicateApplication, insertApplication, insertRecommendation } from "../lib/db";
+import { findApplicationByEmail, insertApplication, insertRecommendation } from "../lib/db";
 import type { ApplicationRecord } from "../lib/db";
 import {
   emailApplicantConfirmation,
   emailTeacherRequest,
   emailBoardNewApplication,
   emailDuplicateApplication,
+  sendSucceeded,
 } from "../lib/email";
 
 export const SCHOLARSHIP_LABELS: Record<string, string> = {
@@ -33,7 +34,7 @@ function asFile(v: File | string | null): File | null {
   return null;
 }
 
-function randomToken(): string {
+export function randomToken(): string {
   const bytes = new Uint8Array(24);
   crypto.getRandomValues(bytes);
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
@@ -74,27 +75,24 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return json({ ok: false, error: errors.map((e) => e.message).join(" "), errors }, 400);
   }
 
-  // One application per student, to one scholarship. Checked before the uploads
-  // so a rejected duplicate never leaves orphaned objects in R2.
-  const duplicate = await findDuplicateApplication(
-    env, fields.email, fields.phone, seasonStartISO(env)
-  );
+  // One application per student, to one scholarship. A repeat email address is
+  // rejected; a shared phone number is not (siblings share a family phone), and the
+  // dashboard flags it for the board instead. Checked before the uploads so a
+  // rejected duplicate never leaves orphaned objects in R2.
+  const duplicate = await findApplicationByEmail(env, fields.email, seasonStartISO(env));
   if (duplicate) {
-    const existingLabel =
-      SCHOLARSHIP_LABELS[duplicate.existing.scholarship] || "Andresen Scholarship";
+    const existingLabel = SCHOLARSHIP_LABELS[duplicate.scholarship] || "Andresen Scholarship";
     waitUntil(
       emailDuplicateApplication(
-        env, fields.email, fields.full_name, duplicate.field,
-        existingLabel, duplicate.existing.created_at
-      ).catch((e) => console.error("Duplicate notice email failed", e))
+        env, duplicate.id, fields.email, fields.full_name, existingLabel, duplicate.created_at
+      )
     );
-    const what = duplicate.field === "email" ? "email address" : "phone number";
     return json({
       ok: false,
-      field: duplicate.field,
-      error: `An application has already been submitted with this ${what}. Each student may ` +
-        `apply once, to one scholarship. We've emailed you the details — your first application ` +
-        `still stands, so there's nothing else you need to do.`,
+      field: "email",
+      error: "An application has already been submitted with this email address. Each student may " +
+        "apply once, to one scholarship. We've emailed you the details — your first application " +
+        "still stands, so there's nothing else you need to do.",
     }, 409);
   }
 
@@ -197,13 +195,20 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const adminLink = `${env.APP_BASE_URL}/admin.html`;
 
   // Send notifications after the response so the applicant isn't kept waiting.
-  const notify = Promise.all([
-    emailApplicantConfirmation(env, fields.email, fields.full_name, label, fields.teacher_name),
-    emailTeacherRequest(env, fields.teacher_email, fields.teacher_name, fields.full_name, label, recLink),
-    boardEmails(env).length
-      ? emailBoardNewApplication(env, fields.full_name, label, adminLink)
-      : Promise.resolve(),
-  ]).catch((e) => console.error("Email send failed", e));
+  // The teacher request goes first so the other two can say whether it went out.
+  // sendEmail never throws and records every attempt in email_log.
+  const notify = (async () => {
+    const teacher = await emailTeacherRequest(
+      env, appId, fields.teacher_email, fields.teacher_name, fields.full_name, label, recLink
+    );
+    const teacherSent = sendSucceeded(teacher);
+    await Promise.all([
+      emailApplicantConfirmation(
+        env, appId, fields.email, fields.full_name, label, fields.teacher_name, teacherSent
+      ),
+      emailBoardNewApplication(env, appId, fields.full_name, label, adminLink, teacherSent),
+    ]);
+  })().catch((e) => console.error("Email send failed", e));
   waitUntil(notify);
 
   return json({ ok: true, id: appId });
