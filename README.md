@@ -44,10 +44,26 @@ npm run dev        # http://localhost:8788
 ## Branches
 
 - `main` is production (`andresen-scholarships.org`).
-- **`preview` must stay.** `preview.andresen-scholarships.org` is bound to a branch literally
-  named `preview`, so deleting or renaming it takes the preview site down. It is a long-lived
-  review branch, not a leftover. It is fine for it to sit behind `main`; fast-forward it to
-  `main` when you want the preview to match production.
+- **Keep the branch named `preview`.** `preview.andresen-scholarships.org` is bound to that
+  exact name. It is a permanent review branch; keeping its name preserves the destination
+  for future preview deployments.
+- Other work branches get their own Cloudflare Pages preview URLs. Pushing one of those
+  branches does **not** update `preview.andresen-scholarships.org`.
+
+To bring `preview` up to date, merge `main` into `preview`, review any conflicts and the
+resulting changes, then push `preview`. The branches can have separate commit histories,
+so a fast-forward is not always possible. Check for unfinished preview work before
+assuming the result matches production. Updating `preview` does not update production;
+reviewed changes go live when approved and merged into `main`.
+
+Before deleting a temporary branch, compare its final file changes as well as its commit
+history. A commit absent from `main` may contain a change already applied another way;
+the number of unique commits alone does not establish that work is missing. Keep `main`
+and `preview` out of routine branch cleanup.
+
+**Preview shares production's database and uploaded-file storage.** A preview URL does
+not isolate application records or uploads. Use clearly named test records and follow
+the cleanup notes in [CLAUDE.md](CLAUDE.md#before-the-2027-season-opens).
 
 ## License
 
