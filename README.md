@@ -41,6 +41,14 @@ npm run dev        # http://localhost:8788
 - `schema.sql`, `migrations/` — D1 database schema.
 - `CLAUDE.md` — context and architecture notes for contributors.
 
+## Branches
+
+- `main` is production (`andresen-scholarships.org`).
+- **`preview` must stay.** `preview.andresen-scholarships.org` is bound to a branch literally
+  named `preview`, so deleting or renaming it takes the preview site down. It is a long-lived
+  review branch, not a leftover. It is fine for it to sit behind `main`; fast-forward it to
+  `main` when you want the preview to match production.
+
 ## License
 
 All content, including text and family photographs, is copyright of the
